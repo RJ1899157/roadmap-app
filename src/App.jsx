@@ -602,35 +602,34 @@ export default function App() {
   };
 
   const cardStyle = {
-    background: "rgba(15, 23, 42, 0.82)",
-    backdropFilter: "blur(14px)",
-    border: "1px solid rgba(148, 163, 184, 0.14)",
+    background: "#0f172a",
+    border: "1px solid #1e293b",
     borderRadius: 12,
-    padding: "16px",
-    boxShadow: "0 10px 30px rgba(0, 0, 0, 0.25)",
+    padding: "18px",
+    boxShadow: "0 4px 20px rgba(0, 0, 0, 0.35)",
   };
 
   return (
-    <div style={{ minHeight: "100vh", padding: "20px 24px", color: "#E2E8F0" }}>
+    <div style={{ minHeight: "100vh", padding: "24px 28px", color: "#F8FAFC" }}>
       {/* Header Bar */}
       <div style={{ marginBottom: 24 }}>
         <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 16, flexWrap: "wrap" }}>
           <div style={{ flex: 1, minWidth: 280 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
-              <span style={{ fontSize: 10, color: "#00F0FF", fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase", background: "rgba(0, 240, 255, 0.1)", padding: "2px 8px", borderRadius: 4, border: "1px solid rgba(0, 240, 255, 0.25)" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
+              <span style={{ fontSize: 11, color: "#00F0FF", fontWeight: 800, letterSpacing: "0.15em", textTransform: "uppercase", background: "rgba(0, 240, 255, 0.12)", padding: "3px 10px", borderRadius: 4, border: "1px solid rgba(0, 240, 255, 0.4)" }}>
                 SWE VACATION ROADMAP
               </span>
-              <span style={{ fontSize: 11, color: "#64748B", fontFamily: "'JetBrains Mono', monospace" }}>v4.2</span>
+              <span style={{ fontSize: 12, color: "#94A3B8", fontFamily: "'JetBrains Mono', monospace", fontWeight: 600 }}>v4.2</span>
             </div>
-            <div style={{ fontSize: 22, fontWeight: 700, color: "#F8FAFC", letterSpacing: "-0.01em" }}>
+            <div style={{ fontSize: 26, fontWeight: 800, color: "#FFFFFF", letterSpacing: "-0.01em", lineHeight: 1.2 }}>
               Focus Mode · Daily Execution & Backlog Tracker
             </div>
-            <div style={{ fontSize: 12, color: "#94A3B8", marginTop: 3 }}>
+            <div style={{ fontSize: 13, color: "#CBD5E1", marginTop: 5, fontWeight: 500 }}>
               Abdul Bari DSA (Ready) · LeetCode 75/Mastery · Certifications · Real-time Carryover
             </div>
 
             {/* Navigation Tabs */}
-            <div style={{ display: "flex", gap: 8, marginTop: 14 }}>
+            <div style={{ display: "flex", gap: 10, marginTop: 16 }}>
               {[
                 ["roadmap", "ROADMAP VIEW"],
                 ["leetcode", "LEETCODE TRACKER"],
@@ -642,17 +641,17 @@ export default function App() {
                     type="button"
                     onClick={() => setActiveView(view)}
                     style={{
-                      fontSize: 11.5,
-                      fontWeight: 600,
-                      padding: "7px 14px",
+                      fontSize: 12,
+                      fontWeight: 700,
+                      padding: "8px 16px",
                       borderRadius: 6,
-                      border: `1px solid ${active ? "#00F0FF" : "rgba(148, 163, 184, 0.2)"}`,
-                      background: active ? "rgba(0, 240, 255, 0.12)" : "rgba(15, 23, 42, 0.6)",
-                      color: active ? "#00F0FF" : "#94A3B8",
+                      border: `1.5px solid ${active ? "#00F0FF" : "#334155"}`,
+                      background: active ? "rgba(0, 240, 255, 0.18)" : "#0f172a",
+                      color: active ? "#00F0FF" : "#CBD5E1",
                       cursor: "pointer",
                       fontFamily: "'JetBrains Mono', monospace",
                       letterSpacing: "0.06em",
-                      boxShadow: active ? "0 0 15px rgba(0, 240, 255, 0.2)" : "none",
+                      boxShadow: active ? "0 0 16px rgba(0, 240, 255, 0.25)" : "none",
                       transition: "all 0.15s ease",
                     }}
                   >
@@ -672,15 +671,15 @@ export default function App() {
         <>
           {/* Overall Progress HUD */}
           <div style={{ ...cardStyle, marginBottom: 16 }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8, flexWrap: "wrap", gap: 8 }}>
-              <span style={{ fontSize: 11, fontWeight: 600, color: "#94A3B8", letterSpacing: "0.12em", textTransform: "uppercase", fontFamily: "'JetBrains Mono', monospace" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10, flexWrap: "wrap", gap: 8 }}>
+              <span style={{ fontSize: 12, fontWeight: 700, color: "#CBD5E1", letterSpacing: "0.12em", textTransform: "uppercase", fontFamily: "'JetBrains Mono', monospace" }}>
                 OVERALL ROADMAP COMPLETION
               </span>
-              <span style={{ fontSize: 13, fontWeight: 700, color: "#F8FAFC", fontFamily: "'JetBrains Mono', monospace" }}>
+              <span style={{ fontSize: 14, fontWeight: 800, color: "#FFFFFF", fontFamily: "'JetBrains Mono', monospace" }}>
                 {doneOverall}/{totalOverall} tasks · {pctOverall}%
               </span>
             </div>
-            <div style={{ background: "rgba(255, 255, 255, 0.08)", borderRadius: 99, height: 7, overflow: "hidden" }}>
+            <div style={{ background: "rgba(255, 255, 255, 0.12)", borderRadius: 99, height: 8, overflow: "hidden" }}>
               <div
                 style={{
                   width: `${pctOverall}%`,
@@ -688,7 +687,7 @@ export default function App() {
                   background: "linear-gradient(90deg, #00F0FF 0%, #10B981 100%)",
                   borderRadius: 99,
                   transition: "width 0.4s ease",
-                  boxShadow: "0 0 10px rgba(0, 240, 255, 0.4)",
+                  boxShadow: "0 0 12px rgba(0, 240, 255, 0.5)",
                 }}
               />
             </div>
@@ -697,53 +696,53 @@ export default function App() {
           {/* Metrics Dashboard */}
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))", gap: 10, marginBottom: 16 }}>
             <div style={cardStyle}>
-              <div style={{ fontSize: 10, color: "#64748B", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 4 }}>COMPLETED DAYS</div>
-              <div style={{ fontSize: 24, fontWeight: 700, color: "#F8FAFC", fontFamily: "'JetBrains Mono', monospace" }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: "#CBD5E1", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 6 }}>COMPLETED DAYS</div>
+              <div style={{ fontSize: 26, fontWeight: 800, color: "#FFFFFF", fontFamily: "'JetBrains Mono', monospace" }}>
                 {completedDays}/{DAYS.length}
               </div>
-              <div style={{ fontSize: 10.5, color: "#94A3B8", marginTop: 4 }}>All planned tasks completed</div>
+              <div style={{ fontSize: 11.5, color: "#94A3B8", marginTop: 4 }}>All planned tasks completed</div>
             </div>
 
             <div style={cardStyle}>
-              <div style={{ fontSize: 10, color: "#64748B", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 4 }}>CURRENT STREAK</div>
-              <div style={{ fontSize: 24, fontWeight: 700, color: "#10B981", fontFamily: "'JetBrains Mono', monospace" }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: "#CBD5E1", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 6 }}>CURRENT STREAK</div>
+              <div style={{ fontSize: 26, fontWeight: 800, color: "#10B981", fontFamily: "'JetBrains Mono', monospace" }}>
                 {currentStreak} day{currentStreak === 1 ? "" : "s"}
               </div>
-              <div style={{ fontSize: 10.5, color: "#94A3B8", marginTop: 4 }}>Consecutive fully done days</div>
+              <div style={{ fontSize: 11.5, color: "#94A3B8", marginTop: 4 }}>Consecutive fully done days</div>
             </div>
 
             <div style={cardStyle}>
-              <div style={{ fontSize: 10, color: "#64748B", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 4 }}>BEST STREAK</div>
-              <div style={{ fontSize: 24, fontWeight: 700, color: "#F59E0B", fontFamily: "'JetBrains Mono', monospace" }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: "#CBD5E1", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 6 }}>BEST STREAK</div>
+              <div style={{ fontSize: 26, fontWeight: 800, color: "#FBBF24", fontFamily: "'JetBrains Mono', monospace" }}>
                 {bestStreak} day{bestStreak === 1 ? "" : "s"}
               </div>
-              <div style={{ fontSize: 10.5, color: "#94A3B8", marginTop: 4 }}>Peak consistency run</div>
+              <div style={{ fontSize: 11.5, color: "#94A3B8", marginTop: 4 }}>Peak consistency run</div>
             </div>
 
             <div style={cardStyle}>
-              <div style={{ fontSize: 10, color: "#64748B", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 4 }}>CONSISTENCY</div>
-              <div style={{ fontSize: 24, fontWeight: 700, color: "#00F0FF", fontFamily: "'JetBrains Mono', monospace" }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: "#CBD5E1", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 6 }}>CONSISTENCY</div>
+              <div style={{ fontSize: 26, fontWeight: 800, color: "#00F0FF", fontFamily: "'JetBrains Mono', monospace" }}>
                 {consistency}%
               </div>
-              <div style={{ fontSize: 10.5, color: "#94A3B8", marginTop: 4 }}>Days finished so far</div>
+              <div style={{ fontSize: 11.5, color: "#94A3B8", marginTop: 4 }}>Days finished so far</div>
             </div>
 
             <div style={cardStyle}>
-              <div style={{ fontSize: 10, color: "#64748B", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 4 }}>LEETCODE TASKS</div>
-              <div style={{ fontSize: 24, fontWeight: 700, color: "#F8FAFC", fontFamily: "'JetBrains Mono', monospace" }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: "#CBD5E1", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 6 }}>LEETCODE TASKS</div>
+              <div style={{ fontSize: 26, fontWeight: 800, color: "#FFFFFF", fontFamily: "'JetBrains Mono', monospace" }}>
                 {leetCodeDoneCount}/{leetCodeTaskCount}
               </div>
-              <div style={{ fontSize: 10.5, color: "#94A3B8", marginTop: 4 }}>
+              <div style={{ fontSize: 11.5, color: "#94A3B8", marginTop: 4 }}>
                 {leetCodeTaskCount ? Math.round((leetCodeDoneCount / leetCodeTaskCount) * 100) : 0}% done
               </div>
             </div>
 
             <div style={cardStyle}>
-              <div style={{ fontSize: 10, color: "#64748B", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 4 }}>DSA & UDEMY</div>
-              <div style={{ fontSize: 24, fontWeight: 700, color: "#30D158", fontFamily: "'JetBrains Mono', monospace" }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: "#CBD5E1", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 6 }}>DSA & UDEMY</div>
+              <div style={{ fontSize: 26, fontWeight: 800, color: "#34D399", fontFamily: "'JetBrains Mono', monospace" }}>
                 {dsaDoneCount}/{dsaTaskCount}
               </div>
-              <div style={{ fontSize: 10.5, color: "#30D158", marginTop: 4, display: "flex", alignItems: "center", gap: 4 }}>
+              <div style={{ fontSize: 11.5, color: "#34D399", marginTop: 4, display: "flex", alignItems: "center", gap: 4, fontWeight: 600 }}>
                 ✓ {dsaTaskCount ? Math.round((dsaDoneCount / dsaTaskCount) * 100) : 100}% ready
               </div>
             </div>
@@ -751,20 +750,20 @@ export default function App() {
 
           {/* Reset & Status Banner */}
           <div style={{ display: "flex", justifyContent: "space-between", gap: 12, marginBottom: 16, flexWrap: "wrap", alignItems: "center" }}>
-            <div style={{ fontSize: 12, color: "#94A3B8" }}>
+            <div style={{ fontSize: 13, color: "#CBD5E1", fontWeight: 500 }}>
               💡 Unfinished tasks from previous days automatically roll forward into the carryover backlog.
             </div>
             <button
               type="button"
               onClick={() => { if (window.confirm("Are you sure you want to reset all progress?")) setChecked(getInitialDsaChecked()); }}
               style={{
-                fontSize: 11,
-                fontWeight: 600,
-                padding: "5px 12px",
+                fontSize: 11.5,
+                fontWeight: 700,
+                padding: "6px 14px",
                 borderRadius: 6,
-                border: "1px solid rgba(239, 68, 68, 0.4)",
-                background: "rgba(239, 68, 68, 0.1)",
-                color: "#F87171",
+                border: "1.5px solid rgba(239, 68, 68, 0.7)",
+                background: "rgba(239, 68, 68, 0.15)",
+                color: "#FCA5A5",
                 cursor: "pointer",
                 fontFamily: "'JetBrains Mono', monospace",
               }}
@@ -815,7 +814,7 @@ export default function App() {
               ))}
             </div>
 
-            <form onSubmit={handleChatSubmit} style={{ display: "flex", gap: 8, marginTop: 10 }}>
+            <form onSubmit={handleChatSubmit} style={{ display: "flex", gap: 8, marginTop: 12 }}>
               <input
                 value={chatInput}
                 onChange={(e) => setChatInput(e.target.value)}
@@ -823,12 +822,12 @@ export default function App() {
                 style={{
                   flex: 1,
                   minWidth: 0,
-                  padding: "9px 12px",
+                  padding: "10px 14px",
                   borderRadius: 6,
-                  border: "1px solid rgba(148, 163, 184, 0.2)",
-                  background: "rgba(10, 15, 29, 0.9)",
-                  color: "#F8FAFC",
-                  fontSize: 12,
+                  border: "1.5px solid #334155",
+                  background: "#0b1120",
+                  color: "#FFFFFF",
+                  fontSize: 12.5,
                   fontFamily: "'JetBrains Mono', monospace",
                   outline: "none",
                 }}
@@ -836,14 +835,14 @@ export default function App() {
               <button
                 type="submit"
                 style={{
-                  padding: "9px 16px",
+                  padding: "10px 18px",
                   borderRadius: 6,
                   border: "1px solid #00F0FF",
                   background: "#00F0FF",
                   color: "#050811",
                   cursor: "pointer",
-                  fontSize: 12,
-                  fontWeight: 700,
+                  fontSize: 12.5,
+                  fontWeight: 800,
                   fontFamily: "'JetBrains Mono', monospace",
                 }}
               >
@@ -853,7 +852,7 @@ export default function App() {
           </div>
 
           {/* 53-Day Matrix Picker */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(66px, 1fr))", gap: 6, marginBottom: 20 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(72px, 1fr))", gap: 7, marginBottom: 20 }}>
             {DAYS.map((d, di) => {
               const customForDay = getCustomTasks(di);
               const total = d.sections.reduce((a, s) => a + s.tasks.length, 0) + customForDay.length;
@@ -862,27 +861,31 @@ export default function App() {
               const pct = total ? done / total : 0;
               const isActive = di === curDay;
               const c = PHASE_INFO[d.phase]?.color || "#00F0FF";
+              const dayDate = d.d.split(", ")[1] || d.d;
 
               return (
                 <button
                   key={di}
                   onClick={() => setCurDay(di)}
                   style={{
-                    padding: "8px 4px",
+                    padding: "9px 4px",
                     borderRadius: 8,
-                    border: `1px solid ${isActive ? c : "rgba(148, 163, 184, 0.15)"}`,
-                    background: isActive ? "rgba(15, 23, 42, 0.95)" : "rgba(15, 23, 42, 0.5)",
+                    border: `1.5px solid ${isActive ? c : "rgba(148, 163, 184, 0.28)"}`,
+                    background: isActive ? "#1e293b" : "#0f172a",
                     cursor: "pointer",
                     textAlign: "center",
                     position: "relative",
                     overflow: "hidden",
-                    boxShadow: isActive ? `0 0 12px ${c}33` : "none",
+                    boxShadow: isActive ? `0 0 16px ${c}55` : "none",
                     transition: "all 0.15s ease",
                   }}
                 >
-                  <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: `${pct * 100}%`, background: c, opacity: 0.18 }} />
-                  <div style={{ fontSize: 9.5, fontWeight: isActive ? 700 : 500, color: isActive ? "#F8FAFC" : "#94A3B8", lineHeight: 1.3, position: "relative" }}>
-                    {d.d.split(", ")[1]?.split(" ").reverse().join("\n") || d.d.slice(0, 6)}
+                  <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: `${pct * 100}%`, background: c, opacity: 0.25 }} />
+                  <div style={{ fontSize: 10, fontWeight: 700, color: isActive ? c : "#94A3B8", letterSpacing: "0.04em", marginBottom: 2 }}>
+                    D{di + 1}
+                  </div>
+                  <div style={{ fontSize: 11, fontWeight: isActive ? 800 : 600, color: isActive ? "#FFFFFF" : "#E2E8F0", lineHeight: 1.2, position: "relative" }}>
+                    {dayDate}
                   </div>
                   {pct === 1 && (
                     <div style={{ position: "absolute", top: 3, right: 3, width: 6, height: 6, borderRadius: "50%", background: c, boxShadow: `0 0 6px ${c}` }} />
@@ -895,34 +898,36 @@ export default function App() {
           {/* Day Detail Card */}
           <div style={{ ...cardStyle, padding: 0, overflow: "hidden", marginBottom: 16 }}>
             {/* Header */}
-            <div style={{ background: "rgba(15, 23, 42, 0.95)", borderBottom: "1px solid rgba(148, 163, 184, 0.15)", padding: "16px 20px" }}>
+            <div style={{ background: "#0f172a", borderBottom: "1px solid #1e293b", padding: "18px 22px" }}>
               <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8, flexWrap: "wrap" }}>
-                <span style={{ fontSize: 10.5, fontWeight: 700, padding: "2px 8px", borderRadius: 4, background: `${phaseColor}22`, color: phaseColor, border: `1px solid ${phaseColor}55`, letterSpacing: "0.08em" }}>
+                <span style={{ fontSize: 11, fontWeight: 800, padding: "3px 10px", borderRadius: 4, background: `${phaseColor}25`, color: phaseColor, border: `1.5px solid ${phaseColor}88`, letterSpacing: "0.08em" }}>
                   DAY {curDay + 1}
                 </span>
-                <span style={{ fontSize: 11, color: "#94A3B8" }}>{day.phase}</span>
+                <span style={{ fontSize: 12, color: "#CBD5E1", fontWeight: 600 }}>{day.phase}</span>
                 {carryoverTasks.length > 0 && (
-                  <span style={{ fontSize: 11, color: "#F59E0B", fontWeight: 600 }}>{carryoverTasks.length} carried over</span>
+                  <span style={{ fontSize: 12, color: "#FBBF24", fontWeight: 700, background: "rgba(251, 191, 36, 0.15)", padding: "2px 8px", borderRadius: 4, border: "1px solid rgba(251, 191, 36, 0.4)" }}>
+                    {carryoverTasks.length} carried over
+                  </span>
                 )}
-                <span style={{ marginLeft: "auto", fontSize: 12, fontWeight: 700, color: dayPct === 100 ? "#10B981" : "#F8FAFC", fontFamily: "'JetBrains Mono', monospace" }}>
+                <span style={{ marginLeft: "auto", fontSize: 13, fontWeight: 800, color: dayPct === 100 ? "#10B981" : "#FFFFFF", fontFamily: "'JetBrains Mono', monospace" }}>
                   {dayDone}/{dayTasks} done ({dayPct}%)
                 </span>
               </div>
 
-              <div style={{ fontSize: 18, fontWeight: 700, color: "#F8FAFC" }}>{getDayLabel(day)}</div>
-              {day.note && <div style={{ fontSize: 12, color: "#94A3B8", fontStyle: "italic", marginTop: 4 }}>{day.note}</div>}
+              <div style={{ fontSize: 20, fontWeight: 800, color: "#FFFFFF" }}>{getDayLabel(day)}</div>
+              {day.note && <div style={{ fontSize: 13, color: "#CBD5E1", fontStyle: "italic", marginTop: 4 }}>{day.note}</div>}
 
-              <div style={{ background: "rgba(255, 255, 255, 0.08)", borderRadius: 99, height: 5, marginTop: 12, overflow: "hidden" }}>
+              <div style={{ background: "rgba(255, 255, 255, 0.12)", borderRadius: 99, height: 6, marginTop: 14, overflow: "hidden" }}>
                 <div style={{ width: `${dayPct}%`, height: "100%", background: phaseColor, transition: "width 0.3s ease", borderRadius: 99 }} />
               </div>
             </div>
 
             {/* Content & Tasks */}
-            <div style={{ padding: "18px 20px" }}>
+            <div style={{ padding: "20px 22px" }}>
               {/* Carryover Box */}
               {carryoverTasks.length > 0 && (
-                <div style={{ marginBottom: 20, border: "1px solid rgba(245, 158, 11, 0.3)", borderRadius: 8, background: "rgba(245, 158, 11, 0.06)", padding: "12px 14px" }}>
-                  <div style={{ fontSize: 10.5, fontWeight: 700, color: "#F59E0B", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 8, borderBottom: "1px solid rgba(245, 158, 11, 0.2)", paddingBottom: 4 }}>
+                <div style={{ marginBottom: 22, border: "1.5px solid rgba(245, 158, 11, 0.5)", borderRadius: 10, background: "rgba(245, 158, 11, 0.08)", padding: "14px 16px" }}>
+                  <div style={{ fontSize: 11.5, fontWeight: 800, color: "#FDE047", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 10, borderBottom: "1px solid rgba(245, 158, 11, 0.25)", paddingBottom: 6 }}>
                     Backlog Carryover From Previous Days ({carryoverTasks.length} pending)
                   </div>
 
@@ -963,13 +968,13 @@ export default function App() {
                         />
                         <div style={{ display: "grid", gap: 2, flex: 1 }}>
                           {href ? (
-                            <a href={href} target="_blank" rel="noreferrer" style={{ fontSize: 13, color: "#FDE68A", lineHeight: 1.5, textDecoration: "none" }}>
+                            <a href={href} target="_blank" rel="noreferrer" style={{ fontSize: 13.5, color: "#FEF08A", lineHeight: 1.5, textDecoration: "none", fontWeight: 600 }}>
                               {item.task} ↗
                             </a>
                           ) : (
-                            <span style={{ fontSize: 13, color: "#FDE68A", lineHeight: 1.5 }}>{item.task}</span>
+                            <span style={{ fontSize: 13.5, color: "#FEF08A", lineHeight: 1.5, fontWeight: 500 }}>{item.task}</span>
                           )}
-                          <span style={{ fontSize: 11, color: "#94A3B8" }}>
+                          <span style={{ fontSize: 12, color: "#CBD5E1" }}>
                             From: {item.dayLabel} · {item.sectionLabel}
                           </span>
                         </div>
@@ -986,14 +991,14 @@ export default function App() {
                 const extraItems = getExtraTasks(curDay, si);
 
                 return (
-                  <div key={section.label} style={{ marginBottom: 18 }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8, flexWrap: "wrap", gap: 6, borderBottom: "1px solid rgba(148, 163, 184, 0.12)", paddingBottom: 6 }}>
+                  <div key={section.label} style={{ marginBottom: 20 }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10, flexWrap: "wrap", gap: 8, borderBottom: "1px solid #1e293b", paddingBottom: 8 }}>
                       <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                        <span style={{ fontSize: 11, fontWeight: 700, color: phaseColor, letterSpacing: "0.08em", textTransform: "uppercase" }}>
+                        <span style={{ fontSize: 12, fontWeight: 800, color: phaseColor, letterSpacing: "0.08em", textTransform: "uppercase" }}>
                           {section.label}
                         </span>
                         {isDsaOrUdemyTask(section.label) && (
-                          <span style={{ fontSize: 10, fontWeight: 600, color: "#30D158", background: "rgba(48, 209, 88, 0.12)", border: "1px solid rgba(48, 209, 88, 0.3)", borderRadius: 4, padding: "1px 6px" }}>
+                          <span style={{ fontSize: 11, fontWeight: 700, color: "#34D399", background: "rgba(52, 211, 153, 0.15)", border: "1px solid rgba(52, 211, 153, 0.4)", borderRadius: 4, padding: "2px 8px" }}>
                             ✓ READY (Udemy)
                           </span>
                         )}
@@ -1003,7 +1008,7 @@ export default function App() {
                         <button
                           type="button"
                           onClick={() => addMoreTasks(curDay, si, section.label, section.tasks)}
-                          style={{ fontSize: 10.5, padding: "2px 8px", borderRadius: 4, border: "1px solid rgba(0, 240, 255, 0.3)", background: "rgba(0, 240, 255, 0.08)", color: "#00F0FF", cursor: "pointer", fontFamily: "'JetBrains Mono', monospace" }}
+                          style={{ fontSize: 11, fontWeight: 700, padding: "3px 10px", borderRadius: 4, border: "1px solid #00F0FF", background: "rgba(0, 240, 255, 0.12)", color: "#00F0FF", cursor: "pointer", fontFamily: "'JetBrains Mono', monospace" }}
                         >
                           + extra task
                         </button>
@@ -1024,21 +1029,21 @@ export default function App() {
                             display: "flex",
                             alignItems: "flex-start",
                             gap: 10,
-                            padding: "8px 0",
+                            padding: "9px 0",
                             cursor: href ? "default" : "pointer",
-                            borderBottom: "1px solid rgba(148, 163, 184, 0.08)",
+                            borderBottom: "1px solid rgba(148, 163, 184, 0.1)",
                           }}
                         >
                           <button
                             type="button"
                             onClick={(event) => { event.stopPropagation(); toggle(curDay, si, ti); }}
                             style={{
-                              width: 17,
-                              height: 17,
-                              minWidth: 17,
+                              width: 18,
+                              height: 18,
+                              minWidth: 18,
                               marginTop: 2,
                               borderRadius: 4,
-                              border: `1.5px solid ${done ? phaseColor : "rgba(148, 163, 184, 0.3)"}`,
+                              border: `1.5px solid ${done ? phaseColor : "rgba(148, 163, 184, 0.45)"}`,
                               background: done ? phaseColor : "transparent",
                               display: "flex",
                               alignItems: "center",
@@ -1047,7 +1052,7 @@ export default function App() {
                               padding: 0,
                             }}
                           >
-                            {done && <span style={{ fontSize: 10, color: "#050811", fontWeight: 800 }}>✓</span>}
+                            {done && <span style={{ fontSize: 11, color: "#050811", fontWeight: 800 }}>✓</span>}
                           </button>
                           <div style={{ flex: 1 }}>
                             {href ? (
@@ -1055,12 +1060,12 @@ export default function App() {
                                 href={href}
                                 target="_blank"
                                 rel="noreferrer"
-                                style={{ fontSize: 13, color: done ? "#64748B" : "#F8FAFC", textDecoration: done ? "line-through" : "none", lineHeight: 1.5 }}
+                                style={{ fontSize: 13.5, color: done ? "#94A3B8" : "#38BDF8", textDecoration: done ? "line-through" : "none", lineHeight: 1.5, fontWeight: done ? 400 : 600 }}
                               >
                                 {task} ↗
                               </a>
                             ) : (
-                              <span style={{ fontSize: 13, color: done ? "#64748B" : "#F8FAFC", textDecoration: done ? "line-through" : "none", lineHeight: 1.5 }}>
+                              <span style={{ fontSize: 13.5, color: done ? "#94A3B8" : "#FFFFFF", textDecoration: done ? "line-through" : "none", lineHeight: 1.5, fontWeight: done ? 400 : 500 }}>
                                 {task}
                               </span>
                             )}
@@ -1093,12 +1098,12 @@ export default function App() {
                             type="button"
                             onClick={(event) => { event.stopPropagation(); toggleById(id); }}
                             style={{
-                              width: 17,
-                              height: 17,
-                              minWidth: 17,
+                              width: 18,
+                              height: 18,
+                              minWidth: 18,
                               marginTop: 2,
                               borderRadius: 4,
-                              border: `1.5px solid ${done ? phaseColor : "rgba(148, 163, 184, 0.3)"}`,
+                              border: `1.5px solid ${done ? phaseColor : "rgba(148, 163, 184, 0.45)"}`,
                               background: done ? phaseColor : "transparent",
                               display: "flex",
                               alignItems: "center",
@@ -1107,15 +1112,15 @@ export default function App() {
                               padding: 0,
                             }}
                           >
-                            {done && <span style={{ fontSize: 10, color: "#050811", fontWeight: 800 }}>✓</span>}
+                            {done && <span style={{ fontSize: 11, color: "#050811", fontWeight: 800 }}>✓</span>}
                           </button>
                           <div style={{ flex: 1 }}>
                             {href ? (
-                              <a href={href} target="_blank" rel="noreferrer" style={{ fontSize: 13, color: done ? "#64748B" : "#CBD5E1", textDecoration: done ? "line-through" : "none", lineHeight: 1.5 }}>
+                              <a href={href} target="_blank" rel="noreferrer" style={{ fontSize: 13.5, color: done ? "#94A3B8" : "#38BDF8", textDecoration: done ? "line-through" : "none", lineHeight: 1.5, fontWeight: done ? 400 : 600 }}>
                                 {task} ↗
                               </a>
                             ) : (
-                              <span style={{ fontSize: 13, color: done ? "#64748B" : "#CBD5E1", textDecoration: done ? "line-through" : "none", lineHeight: 1.5 }}>
+                              <span style={{ fontSize: 13.5, color: done ? "#94A3B8" : "#E2E8F0", textDecoration: done ? "line-through" : "none", lineHeight: 1.5, fontWeight: done ? 400 : 500 }}>
                                 {task}
                               </span>
                             )}
@@ -1124,7 +1129,7 @@ export default function App() {
                           <button
                             type="button"
                             onClick={(event) => { event.stopPropagation(); removeExtraTask(curDay, si, ei); }}
-                            style={{ fontSize: 10, padding: "2px 6px", borderRadius: 4, border: "1px solid rgba(239, 68, 68, 0.3)", background: "transparent", color: "#F87171", cursor: "pointer" }}
+                            style={{ fontSize: 11, padding: "2px 8px", borderRadius: 4, border: "1px solid rgba(239, 68, 68, 0.4)", background: "rgba(239, 68, 68, 0.1)", color: "#FCA5A5", cursor: "pointer", fontWeight: 600 }}
                           >
                             remove
                           </button>
@@ -1135,10 +1140,10 @@ export default function App() {
                 );
               })}
 
-              {/* Day's Custom Added Tasks (Fixed crash bug by passing null instead of sectionPriority) */}
+              {/* Day's Custom Added Tasks */}
               {dayCustomTasks.length > 0 && (
-                <div style={{ marginBottom: 18 }}>
-                  <div style={{ fontSize: 11, fontWeight: 700, color: "#00F0FF", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 6, borderBottom: "1px solid rgba(148, 163, 184, 0.12)", paddingBottom: 4 }}>
+                <div style={{ marginBottom: 20 }}>
+                  <div style={{ fontSize: 12, fontWeight: 800, color: "#00F0FF", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 8, borderBottom: "1px solid #1e293b", paddingBottom: 6 }}>
                     Custom Added Tasks
                   </div>
                   {dayCustomTasks.map((task, ti) => {
@@ -1154,21 +1159,21 @@ export default function App() {
                           display: "flex",
                           alignItems: "flex-start",
                           gap: 10,
-                          padding: "8px 0",
+                          padding: "9px 0",
                           cursor: href ? "default" : "pointer",
-                          borderBottom: ti < dayCustomTasks.length - 1 ? "1px solid rgba(148, 163, 184, 0.08)" : "none",
+                          borderBottom: ti < dayCustomTasks.length - 1 ? "1px solid rgba(148, 163, 184, 0.1)" : "none",
                         }}
                       >
                         <button
                           type="button"
                           onClick={(event) => { event.stopPropagation(); toggleById(id); }}
                           style={{
-                            width: 17,
-                            height: 17,
-                            minWidth: 17,
+                            width: 18,
+                            height: 18,
+                            minWidth: 18,
                             marginTop: 2,
                             borderRadius: 4,
-                            border: `1.5px solid ${done ? phaseColor : "rgba(148, 163, 184, 0.3)"}`,
+                            border: `1.5px solid ${done ? phaseColor : "rgba(148, 163, 184, 0.45)"}`,
                             background: done ? phaseColor : "transparent",
                             display: "flex",
                             alignItems: "center",
@@ -1177,15 +1182,15 @@ export default function App() {
                             padding: 0,
                           }}
                         >
-                          {done && <span style={{ fontSize: 10, color: "#050811", fontWeight: 800 }}>✓</span>}
+                          {done && <span style={{ fontSize: 11, color: "#050811", fontWeight: 800 }}>✓</span>}
                         </button>
                         <div style={{ flex: 1 }}>
                           {href ? (
-                            <a href={href} target="_blank" rel="noreferrer" style={{ fontSize: 13, color: done ? "#64748B" : "#F8FAFC", textDecoration: done ? "line-through" : "none", lineHeight: 1.5 }}>
+                            <a href={href} target="_blank" rel="noreferrer" style={{ fontSize: 13.5, color: done ? "#94A3B8" : "#38BDF8", textDecoration: done ? "line-through" : "none", lineHeight: 1.5, fontWeight: done ? 400 : 600 }}>
                               {task.text} ↗
                             </a>
                           ) : (
-                            <span style={{ fontSize: 13, color: done ? "#64748B" : "#F8FAFC", textDecoration: done ? "line-through" : "none", lineHeight: 1.5 }}>
+                            <span style={{ fontSize: 13.5, color: done ? "#94A3B8" : "#FFFFFF", textDecoration: done ? "line-through" : "none", lineHeight: 1.5, fontWeight: done ? 400 : 500 }}>
                               {task.text}
                             </span>
                           )}
@@ -1195,7 +1200,7 @@ export default function App() {
                         <button
                           type="button"
                           onClick={(event) => { event.stopPropagation(); removeCustomTask(curDay, task.id); }}
-                          style={{ fontSize: 10, padding: "2px 6px", borderRadius: 4, border: "1px solid rgba(239, 68, 68, 0.3)", background: "transparent", color: "#F87171", cursor: "pointer" }}
+                          style={{ fontSize: 11, padding: "2px 8px", borderRadius: 4, border: "1px solid rgba(239, 68, 68, 0.4)", background: "rgba(239, 68, 68, 0.1)", color: "#FCA5A5", cursor: "pointer", fontWeight: 600 }}
                         >
                           remove
                         </button>
@@ -1206,7 +1211,7 @@ export default function App() {
               )}
 
               {/* Add Custom Task Form */}
-              <form onSubmit={addCustomTask} style={{ display: "flex", gap: 8, marginTop: 16, paddingTop: 14, borderTop: "1px solid rgba(148, 163, 184, 0.15)" }}>
+              <form onSubmit={addCustomTask} style={{ display: "flex", gap: 8, marginTop: 18, paddingTop: 16, borderTop: "1px solid #1e293b" }}>
                 <input
                   value={customTaskText}
                   onChange={(e) => setCustomTaskText(e.target.value)}
@@ -1214,12 +1219,12 @@ export default function App() {
                   style={{
                     flex: 1,
                     minWidth: 0,
-                    padding: "9px 12px",
+                    padding: "10px 14px",
                     borderRadius: 6,
-                    border: "1px solid rgba(148, 163, 184, 0.2)",
-                    background: "rgba(10, 15, 29, 0.9)",
-                    color: "#F8FAFC",
-                    fontSize: 12,
+                    border: "1.5px solid #334155",
+                    background: "#0b1120",
+                    color: "#FFFFFF",
+                    fontSize: 12.5,
                     fontFamily: "'JetBrains Mono', monospace",
                     outline: "none",
                   }}

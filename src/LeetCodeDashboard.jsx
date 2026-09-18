@@ -562,23 +562,22 @@ export default function LeetCodeDashboard() {
   };
 
   const cardStyle = {
-    background: "rgba(15, 23, 42, 0.8)",
-    backdropFilter: "blur(12px)",
-    border: "1px solid rgba(148, 163, 184, 0.15)",
+    background: "#0f172a",
+    border: "1px solid #1e293b",
     borderRadius: 12,
-    padding: "16px",
-    boxShadow: "0 10px 25px rgba(0, 0, 0, 0.2)",
+    padding: "18px",
+    boxShadow: "0 4px 20px rgba(0, 0, 0, 0.35)",
   };
 
   const inputStyle = {
     width: "100%",
     boxSizing: "border-box",
-    padding: "8px 12px",
+    padding: "9px 12px",
     borderRadius: 6,
-    border: "1px solid rgba(148, 163, 184, 0.2)",
-    background: "rgba(10, 15, 29, 0.9)",
-    color: "#F8FAFC",
-    fontSize: 12,
+    border: "1.5px solid #334155",
+    background: "#0b1120",
+    color: "#FFFFFF",
+    fontSize: 12.5,
     fontFamily: "'JetBrains Mono', monospace",
     outline: "none",
   };
@@ -586,12 +585,12 @@ export default function LeetCodeDashboard() {
   const buttonStyle = {
     padding: "8px 14px",
     borderRadius: 6,
-    border: "1px solid rgba(0, 240, 255, 0.4)",
-    background: "rgba(0, 240, 255, 0.1)",
+    border: "1px solid rgba(0, 240, 255, 0.5)",
+    background: "rgba(0, 240, 255, 0.12)",
     color: "#00F0FF",
     cursor: "pointer",
     fontSize: 12,
-    fontWeight: 600,
+    fontWeight: 700,
     fontFamily: "'JetBrains Mono', monospace",
     display: "inline-flex",
     alignItems: "center",
@@ -605,39 +604,39 @@ export default function LeetCodeDashboard() {
       {/* Top Metrics HUD */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: 10 }}>
         <div style={cardStyle}>
-          <div style={{ fontSize: 10, color: "#94A3B8", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 4 }}>Total Solved</div>
-          <div style={{ fontSize: 26, fontWeight: 700, color: "#F8FAFC", fontFamily: "'JetBrains Mono', monospace" }}>{solvedLogs.length}</div>
-          <div style={{ fontSize: 10.5, color: "#38BDF8", marginTop: 4 }}>Goal: {goals.total} ({goals.total ? Math.round((solvedLogs.length / goals.total) * 100) : 0}%)</div>
+          <div style={{ fontSize: 11, fontWeight: 700, color: "#CBD5E1", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 6 }}>Total Solved</div>
+          <div style={{ fontSize: 28, fontWeight: 800, color: "#FFFFFF", fontFamily: "'JetBrains Mono', monospace" }}>{solvedLogs.length}</div>
+          <div style={{ fontSize: 11.5, color: "#38BDF8", marginTop: 4, fontWeight: 600 }}>Goal: {goals.total} ({goals.total ? Math.round((solvedLogs.length / goals.total) * 100) : 0}%)</div>
         </div>
 
         <div style={cardStyle}>
-          <div style={{ fontSize: 10, color: "#94A3B8", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 4 }}>Current Streak</div>
-          <div style={{ fontSize: 26, fontWeight: 700, color: "#F59E0B", fontFamily: "'JetBrains Mono', monospace" }}>{currentStreak} <span style={{ fontSize: 13, fontWeight: 500 }}>days</span></div>
-          <div style={{ fontSize: 10.5, color: "#94A3B8", marginTop: 4 }}>Best: {longestStreak} days</div>
+          <div style={{ fontSize: 11, fontWeight: 700, color: "#CBD5E1", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 6 }}>Current Streak</div>
+          <div style={{ fontSize: 28, fontWeight: 800, color: "#FBBF24", fontFamily: "'JetBrains Mono', monospace" }}>{currentStreak} <span style={{ fontSize: 13, fontWeight: 600 }}>days</span></div>
+          <div style={{ fontSize: 11.5, color: "#94A3B8", marginTop: 4 }}>Best: {longestStreak} days</div>
         </div>
 
         <div style={cardStyle}>
-          <div style={{ fontSize: 10, color: "#94A3B8", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 4 }}>Today's Count</div>
-          <div style={{ fontSize: 26, fontWeight: 700, color: "#10B981", fontFamily: "'JetBrains Mono', monospace" }}>{todayLogs.length}</div>
-          <div style={{ fontSize: 10.5, color: "#94A3B8", marginTop: 4 }}>{today}</div>
+          <div style={{ fontSize: 11, fontWeight: 700, color: "#CBD5E1", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 6 }}>Today's Count</div>
+          <div style={{ fontSize: 28, fontWeight: 800, color: "#34D399", fontFamily: "'JetBrains Mono', monospace" }}>{todayLogs.length}</div>
+          <div style={{ fontSize: 11.5, color: "#94A3B8", marginTop: 4 }}>{today}</div>
         </div>
 
         <div style={cardStyle}>
-          <div style={{ fontSize: 10, color: "#94A3B8", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 4 }}>Active Days</div>
-          <div style={{ fontSize: 26, fontWeight: 700, color: "#00F0FF", fontFamily: "'JetBrains Mono', monospace" }}>{activeDaysCount}</div>
-          <div style={{ fontSize: 10.5, color: "#94A3B8", marginTop: 4 }}>{daysThisMonthCount} days this month</div>
+          <div style={{ fontSize: 11, fontWeight: 700, color: "#CBD5E1", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 6 }}>Active Days</div>
+          <div style={{ fontSize: 28, fontWeight: 800, color: "#00F0FF", fontFamily: "'JetBrains Mono', monospace" }}>{activeDaysCount}</div>
+          <div style={{ fontSize: 11.5, color: "#94A3B8", marginTop: 4 }}>{daysThisMonthCount} days this month</div>
         </div>
 
         <div style={cardStyle}>
-          <div style={{ fontSize: 10, color: "#94A3B8", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 4 }}>Striver A2Z</div>
-          <div style={{ fontSize: 26, fontWeight: 700, color: "#BF5AF2", fontFamily: "'JetBrains Mono', monospace" }}>{a2zDoneCount}/{a2zSheet.length}</div>
-          <div style={{ fontSize: 10.5, color: "#94A3B8", marginTop: 4 }}>{a2zSheet.length ? Math.round((a2zDoneCount / a2zSheet.length) * 100) : 0}% completed</div>
+          <div style={{ fontSize: 11, fontWeight: 700, color: "#CBD5E1", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 6 }}>Striver A2Z</div>
+          <div style={{ fontSize: 28, fontWeight: 800, color: "#C084FC", fontFamily: "'JetBrains Mono', monospace" }}>{a2zDoneCount}/{a2zSheet.length}</div>
+          <div style={{ fontSize: 11.5, color: "#94A3B8", marginTop: 4 }}>{a2zSheet.length ? Math.round((a2zDoneCount / a2zSheet.length) * 100) : 0}% completed</div>
         </div>
 
         <div style={cardStyle}>
-          <div style={{ fontSize: 10, color: "#94A3B8", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 4 }}>Attempted</div>
-          <div style={{ fontSize: 26, fontWeight: 700, color: "#E2E8F0", fontFamily: "'JetBrains Mono', monospace" }}>{attemptedLogs.length}</div>
-          <div style={{ fontSize: 10.5, color: "#F59E0B", marginTop: 4 }}>Pending resolution</div>
+          <div style={{ fontSize: 11, fontWeight: 700, color: "#CBD5E1", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 6 }}>Attempted</div>
+          <div style={{ fontSize: 28, fontWeight: 800, color: "#F8FAFC", fontFamily: "'JetBrains Mono', monospace" }}>{attemptedLogs.length}</div>
+          <div style={{ fontSize: 11.5, color: "#F59E0B", marginTop: 4, fontWeight: 600 }}>Pending resolution</div>
         </div>
       </div>
 
@@ -718,14 +717,14 @@ export default function LeetCodeDashboard() {
             })}
           </div>
 
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 8, fontSize: 10, color: "#64748B" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 10, fontSize: 11, color: "#CBD5E1", fontWeight: 500 }}>
             <span>90 days ago</span>
-            <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
               <span>Less</span>
-              <span style={{ width: 8, height: 8, borderRadius: 2, background: "rgba(255, 255, 255, 0.05)" }} />
-              <span style={{ width: 8, height: 8, borderRadius: 2, background: "#047857" }} />
-              <span style={{ width: 8, height: 8, borderRadius: 2, background: "#059669" }} />
-              <span style={{ width: 8, height: 8, borderRadius: 2, background: "#10B981" }} />
+              <span style={{ width: 9, height: 9, borderRadius: 2, background: "rgba(255, 255, 255, 0.08)" }} />
+              <span style={{ width: 9, height: 9, borderRadius: 2, background: "#047857" }} />
+              <span style={{ width: 9, height: 9, borderRadius: 2, background: "#059669" }} />
+              <span style={{ width: 9, height: 9, borderRadius: 2, background: "#10B981" }} />
               <span>More</span>
             </div>
             <span>Today</span>
@@ -734,32 +733,32 @@ export default function LeetCodeDashboard() {
 
         {/* Weak & Strong Topics Card */}
         <div style={cardStyle}>
-          <span style={{ fontSize: 12, fontWeight: 700, color: "#F8FAFC", letterSpacing: "0.08em", textTransform: "uppercase" }}>Topic Diagnostics</span>
-          <div style={{ fontSize: 11, color: "#94A3B8", marginTop: 2, marginBottom: 12 }}>Auto-detected from your solved vs attempted ratios</div>
+          <span style={{ fontSize: 13, fontWeight: 800, color: "#FFFFFF", letterSpacing: "0.08em", textTransform: "uppercase" }}>Topic Diagnostics</span>
+          <div style={{ fontSize: 12, color: "#CBD5E1", marginTop: 3, marginBottom: 14 }}>Auto-detected from your solved vs attempted ratios</div>
 
-          <div style={{ marginBottom: 12 }}>
-            <div style={{ fontSize: 10.5, color: "#10B981", fontWeight: 600, letterSpacing: "0.05em", textTransform: "uppercase", marginBottom: 6 }}>
+          <div style={{ marginBottom: 14 }}>
+            <div style={{ fontSize: 11, color: "#34D399", fontWeight: 700, letterSpacing: "0.05em", textTransform: "uppercase", marginBottom: 6 }}>
               Strong Topics (High Mastery)
             </div>
             <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
               {strongTopics.length ? strongTopics.map((topic) => (
-                <span key={topic} style={{ fontSize: 11, padding: "3px 8px", borderRadius: 4, background: "rgba(16, 185, 129, 0.12)", color: "#34D399", border: "1px solid rgba(16, 185, 129, 0.3)" }}>
+                <span key={topic} style={{ fontSize: 11.5, fontWeight: 600, padding: "3px 9px", borderRadius: 4, background: "rgba(16, 185, 129, 0.16)", color: "#34D399", border: "1px solid rgba(16, 185, 129, 0.4)" }}>
                   {topic}
                 </span>
-              )) : <span style={{ fontSize: 11, color: "#64748B", fontStyle: "italic" }}>Solve more problems to compute strong topics</span>}
+              )) : <span style={{ fontSize: 12, color: "#94A3B8", fontStyle: "italic" }}>Solve more problems to compute strong topics</span>}
             </div>
           </div>
 
           <div>
-            <div style={{ fontSize: 10.5, color: "#EF4444", fontWeight: 600, letterSpacing: "0.05em", textTransform: "uppercase", marginBottom: 6 }}>
+            <div style={{ fontSize: 11, color: "#F87171", fontWeight: 700, letterSpacing: "0.05em", textTransform: "uppercase", marginBottom: 6 }}>
               Weak Topics (Needs Review)
             </div>
             <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
               {weakTopics.length ? weakTopics.map((topic) => (
-                <span key={topic} style={{ fontSize: 11, padding: "3px 8px", borderRadius: 4, background: "rgba(239, 68, 68, 0.12)", color: "#F87171", border: "1px solid rgba(239, 68, 68, 0.3)" }}>
+                <span key={topic} style={{ fontSize: 11.5, fontWeight: 600, padding: "3px 9px", borderRadius: 4, background: "rgba(239, 68, 68, 0.16)", color: "#FCA5A5", border: "1px solid rgba(239, 68, 68, 0.4)" }}>
                   {topic}
                 </span>
-              )) : <span style={{ fontSize: 11, color: "#64748B", fontStyle: "italic" }}>No weak topics detected! Keep solving</span>}
+              )) : <span style={{ fontSize: 12, color: "#94A3B8", fontStyle: "italic" }}>No weak topics detected! Keep solving</span>}
             </div>
           </div>
         </div>
@@ -865,36 +864,36 @@ export default function LeetCodeDashboard() {
 
           <div style={{ overflowX: "auto", maxHeight: 420, overflowY: "auto" }}>
             <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 700 }}>
-              <thead style={{ position: "sticky", top: 0, background: "#0F172A", zIndex: 2 }}>
-                <tr style={{ color: "#64748B", fontSize: 10, letterSpacing: "0.08em", textTransform: "uppercase" }}>
-                  <th style={{ textAlign: "left", padding: "8px" }}>#</th>
-                  <th style={{ textAlign: "left", padding: "8px" }}>Problem</th>
-                  <th style={{ textAlign: "left", padding: "8px" }}>Diff</th>
-                  <th style={{ textAlign: "left", padding: "8px" }}>Type</th>
-                  <th style={{ textAlign: "left", padding: "8px" }}>Status</th>
-                  <th style={{ textAlign: "left", padding: "8px" }}>Date</th>
-                  <th style={{ textAlign: "left", padding: "8px" }}>Notes / Code</th>
-                  <th style={{ padding: "8px", textAlign: "right" }}>Actions</th>
+              <thead style={{ position: "sticky", top: 0, background: "#0b1120", zIndex: 2, borderBottom: "2px solid #334155" }}>
+                <tr style={{ color: "#CBD5E1", fontSize: 11, fontWeight: 800, letterSpacing: "0.08em", textTransform: "uppercase" }}>
+                  <th style={{ textAlign: "left", padding: "10px 8px" }}>#</th>
+                  <th style={{ textAlign: "left", padding: "10px 8px" }}>Problem</th>
+                  <th style={{ textAlign: "left", padding: "10px 8px" }}>Diff</th>
+                  <th style={{ textAlign: "left", padding: "10px 8px" }}>Type</th>
+                  <th style={{ textAlign: "left", padding: "10px 8px" }}>Status</th>
+                  <th style={{ textAlign: "left", padding: "10px 8px" }}>Date</th>
+                  <th style={{ textAlign: "left", padding: "10px 8px" }}>Notes / Code</th>
+                  <th style={{ padding: "10px 8px", textAlign: "right" }}>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {filteredLogs.map((log) => (
-                  <tr key={log.id} style={{ borderTop: "1px solid rgba(148, 163, 184, 0.1)" }}>
-                    <td style={{ padding: "8px", color: "#94A3B8", fontSize: 11, fontFamily: "'JetBrains Mono', monospace" }}>{log.number || "-"}</td>
-                    <td style={{ padding: "8px", color: "#F8FAFC", fontSize: 12.5, fontWeight: 500 }}>{log.title}</td>
-                    <td style={{ padding: "8px", color: difficultyColors[normalizeDifficulty(log.difficulty)], fontSize: 11, fontWeight: 600 }}>{log.difficulty}</td>
-                    <td style={{ padding: "8px", color: "#CBD5E1", fontSize: 11 }}>{log.type}</td>
-                    <td style={{ padding: "8px", color: log.status === "Solved" ? "#10B981" : "#F59E0B", fontSize: 11, fontWeight: 600 }}>{log.status}</td>
-                    <td style={{ padding: "8px", color: "#94A3B8", fontSize: 10.5, fontFamily: "'JetBrains Mono', monospace" }}>{log.date}</td>
-                    <td style={{ padding: "8px", color: "#CBD5E1", fontSize: 11, maxWidth: 220, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }} title={log.learnings || log.code}>
+                  <tr key={log.id} style={{ borderTop: "1px solid #1e293b" }}>
+                    <td style={{ padding: "10px 8px", color: "#CBD5E1", fontSize: 11.5, fontFamily: "'JetBrains Mono', monospace", fontWeight: 600 }}>{log.number || "-"}</td>
+                    <td style={{ padding: "10px 8px", color: "#FFFFFF", fontSize: 13, fontWeight: 600 }}>{log.title}</td>
+                    <td style={{ padding: "10px 8px", color: difficultyColors[normalizeDifficulty(log.difficulty)], fontSize: 11.5, fontWeight: 700 }}>{log.difficulty}</td>
+                    <td style={{ padding: "10px 8px", color: "#CBD5E1", fontSize: 11.5, fontWeight: 500 }}>{log.type}</td>
+                    <td style={{ padding: "10px 8px", color: log.status === "Solved" ? "#34D399" : "#FBBF24", fontSize: 11.5, fontWeight: 700 }}>{log.status}</td>
+                    <td style={{ padding: "10px 8px", color: "#CBD5E1", fontSize: 11, fontFamily: "'JetBrains Mono', monospace" }}>{log.date}</td>
+                    <td style={{ padding: "10px 8px", color: "#E2E8F0", fontSize: 11.5, maxWidth: 240, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }} title={log.learnings || log.code}>
                       {log.learnings || log.code || "—"}
                     </td>
-                    <td style={{ padding: "8px", textAlign: "right" }}>
-                      <div style={{ display: "flex", gap: 4, justifyContent: "flex-end" }}>
-                        <button type="button" onClick={() => editLog(log)} style={{ border: "1px solid rgba(56, 189, 248, 0.3)", background: "transparent", color: "#38BDF8", borderRadius: 4, cursor: "pointer", fontSize: 10, padding: "2px 6px" }}>
+                    <td style={{ padding: "10px 8px", textAlign: "right" }}>
+                      <div style={{ display: "flex", gap: 6, justifyContent: "flex-end" }}>
+                        <button type="button" onClick={() => editLog(log)} style={{ border: "1px solid rgba(56, 189, 248, 0.5)", background: "rgba(56, 189, 248, 0.12)", color: "#38BDF8", borderRadius: 4, cursor: "pointer", fontSize: 11, padding: "3px 8px", fontWeight: 600 }}>
                           edit
                         </button>
-                        <button type="button" onClick={() => deleteLog(log.id)} style={{ border: "1px solid rgba(239, 68, 68, 0.3)", background: "transparent", color: "#EF4444", borderRadius: 4, cursor: "pointer", fontSize: 10, padding: "2px 6px" }}>
+                        <button type="button" onClick={() => deleteLog(log.id)} style={{ border: "1px solid rgba(239, 68, 68, 0.5)", background: "rgba(239, 68, 68, 0.12)", color: "#FCA5A5", borderRadius: 4, cursor: "pointer", fontSize: 11, padding: "3px 8px", fontWeight: 600 }}>
                           del
                         </button>
                       </div>
@@ -904,7 +903,7 @@ export default function LeetCodeDashboard() {
               </tbody>
             </table>
             {!filteredLogs.length && (
-              <div style={{ padding: 24, textAlign: "center", color: "#64748B", fontSize: 12 }}>
+              <div style={{ padding: 28, textAlign: "center", color: "#CBD5E1", fontSize: 13, fontWeight: 500 }}>
                 No problems logged yet or matching the current filters.
               </div>
             )}
@@ -913,21 +912,21 @@ export default function LeetCodeDashboard() {
 
         {/* Type Coverage Breakdown */}
         <div style={cardStyle}>
-          <span style={{ fontSize: 12, fontWeight: 700, color: "#F8FAFC", letterSpacing: "0.08em", textTransform: "uppercase" }}>Type Coverage</span>
-          <div style={{ fontSize: 11, color: "#94A3B8", marginTop: 2, marginBottom: 12 }}>Distribution of solved topics</div>
+          <span style={{ fontSize: 13, fontWeight: 800, color: "#FFFFFF", letterSpacing: "0.08em", textTransform: "uppercase" }}>Type Coverage</span>
+          <div style={{ fontSize: 12, color: "#CBD5E1", marginTop: 3, marginBottom: 14 }}>Distribution of solved topics</div>
 
           {topTypes.length ? topTypes.map(([type, count]) => (
-            <div key={type} style={{ marginBottom: 10 }}>
-              <div style={{ display: "flex", justifyContent: "space-between", color: "#E2E8F0", fontSize: 11.5, marginBottom: 4 }}>
+            <div key={type} style={{ marginBottom: 12 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", color: "#F8FAFC", fontSize: 12, fontWeight: 600, marginBottom: 4 }}>
                 <span>{type}</span>
-                <span style={{ fontFamily: "'JetBrains Mono', monospace", color: "#94A3B8" }}>{count}</span>
+                <span style={{ fontFamily: "'JetBrains Mono', monospace", color: "#38BDF8", fontWeight: 700 }}>{count}</span>
               </div>
-              <div style={{ background: "rgba(255, 255, 255, 0.06)", borderRadius: 99, height: 6, overflow: "hidden" }}>
-                <div style={{ width: `${Math.round((count / maxTypeCount) * 100)}%`, height: "100%", background: "linear-gradient(90deg, #00F0FF, #BF5AF2)", transition: "width 0.3s" }} />
+              <div style={{ background: "rgba(255, 255, 255, 0.1)", borderRadius: 99, height: 7, overflow: "hidden" }}>
+                <div style={{ width: `${Math.round((count / maxTypeCount) * 100)}%`, height: "100%", background: "linear-gradient(90deg, #00F0FF, #C084FC)", transition: "width 0.3s" }} />
               </div>
             </div>
           )) : (
-            <div style={{ color: "#64748B", fontSize: 12, fontStyle: "italic" }}>Log solved problems to see topic breakdown.</div>
+            <div style={{ color: "#CBD5E1", fontSize: 13, fontStyle: "italic" }}>Log solved problems to see topic breakdown.</div>
           )}
         </div>
       </div>
