@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LeetCode Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  :root {
+    --bg:#0d0d0d;--bg2:#141414;--bg3:#1a1a1a;--bg4:#222;
+    --border:rgba(255,255,255,.07);--border2:rgba(255,255,255,.12);
+    --text:#e8e8e8;--text2:#888;--text3:#555;
+    --easy:#00b37e;--easy-bg:rgba(0,179,126,.1);
+    --med:#f0a500;--med-bg:rgba(240,165,0,.1);
+    --hard:#e84545;--hard-bg:rgba(232,69,69,.1);
+    --accent:#ffd200;--accent-bg:rgba(255,210,0,.08);
+    --font-mono:'IBM Plex Mono',monospace;--font-sans:'IBM Plex Sans',sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{background:var(--bg);color:var(--text);font-family:var(--font-sans);font-size:14px;}
+  body{min-height:100vh;}
+  ::-webkit-scrollbar{width:6px;}
+  ::-webkit-scrollbar-track{background:var(--bg);}
+  ::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:3px;}
+
+  .layout{display:grid;grid-template-columns:220px 1fr;min-height:100vh;}
+
+  .sidebar{background:var(--bg2);border-right:1px solid var(--border);padding:1.5rem 1rem;display:flex;flex-direction:column;gap:2rem;position:sticky;top:0;height:100vh;overflow-y:auto;}
+  .logo{font-family:var(--font-mono);font-size:13px;font-weight:600;color:var(--accent);letter-spacing:.08em;padding:0 .5rem;}
+  .logo span{color:var(--text3);}
+  .nav{display:flex;flex-direction:column;gap:2px;}
+  .nav-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:6px;font-size:13px;color:var(--text2);cursor:pointer;border:none;background:none;width:100%;text-align:left;transition:all .15s;font-family:var(--font-sans);}
+  .nav-item:hover{background:var(--bg3);color:var(--text);}
+  .nav-item.active{background:var(--accent-bg);color:var(--accent);border:1px solid rgba(255,210,0,.15);}
+  .nav-item svg{width:15px;height:15px;flex-shrink:0;}
+  .sidebar-stats{border-top:1px solid var(--border);padding-top:1.5rem;display:flex;flex-direction:column;gap:10px;}
+  .sidebar-stat-label{font-size:11px;color:var(--text3);font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;}
+  .sidebar-streak-num{font-size:28px;font-weight:500;font-family:var(--font-mono);color:var(--accent);}
+  .sidebar-streak-label{font-size:12px;color:var(--text2);}
+  .mini-calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;}
+  .mini-cal-day{aspect-ratio:1;border-radius:2px;}
+  .mini-cal-day.done{background:var(--easy);opacity:.8;}
+  .mini-cal-day.miss{background:var(--bg4);}
+  .mini-cal-day.today{background:var(--accent);}
+
+  .main{padding:2rem;display:flex;flex-direction:column;gap:1.5rem;overflow-x:hidden;}
+  .page-title{font-size:22px;font-weight:500;letter-spacing:-.01em;}
+  .page-subtitle{font-size:13px;color:var(--text2);margin-top:2px;font-family:var(--font-mono);}
+
+  .section{display:none;flex-direction:column;gap:1.5rem;}
+  .section.active{display:flex;}
+
+  .card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:1.25rem 1.5rem;}
+  .card-title{font-size:12px;color:var(--text3);font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.08em;margin-bottom:1rem;}
+
+  .metric-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;}
+  .metric-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:1rem 1.25rem;display:flex;flex-direction:column;gap:4px;}
+  .metric-label{font-size:11px;color:var(--text3);font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.06em;}
+  .metric-value{font-size:28px;font-weight:500;font-family:var(--font-mono);line-height:1;}
+  .metric-value.easy{color:var(--easy);}
+  .metric-value.med{color:var(--med);}
+  .metric-value.hard{color:var(--hard);}
+  .metric-value.total{color:var(--text);}
+  .metric-value.accent{color:var(--accent);}
+  .metric-sub{font-size:11px;color:var(--text3);}
+
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+
+  .rings-row{display:flex;align-items:center;justify-content:space-around;flex-wrap:wrap;gap:1rem;padding:.5rem 0;}
+  .ring-item{display:flex;flex-direction:column;align-items:center;gap:8px;}
+  .ring-label{font-size:11px;font-family:var(--font-mono);color:var(--text2);}
+
+  .topic-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+  .topic-name{font-size:12px;color:var(--text2);width:100px;flex-shrink:0;font-family:var(--font-mono);}
+  .topic-bar-bg{flex:1;height:5px;background:var(--bg4);border-radius:99px;overflow:hidden;}
+  .topic-bar-fill{height:100%;border-radius:99px;transition:width .5s cubic-bezier(.4,0,.2,1);}
+  .topic-count{font-size:11px;color:var(--text3);width:30px;text-align:right;font-family:var(--font-mono);}
+
+  .tag-row{display:flex;flex-wrap:wrap;gap:6px;}
+  .tag{font-size:11px;padding:3px 10px;border-radius:99px;font-family:var(--font-mono);}
+  .tag.weak{background:var(--hard-bg);color:var(--hard);border:1px solid rgba(232,69,69,.2);}
+  .tag.strong{background:var(--easy-bg);color:var(--easy);border:1px solid rgba(0,179,126,.2);}
+
+  /* ── Log form ── */
+  .form-row{display:grid;grid-template-columns:160px 1fr auto auto auto auto;gap:8px;align-items:start;margin-bottom:6px;}
+  .lookup-wrap{position:relative;}
+  .lookup-preview{
+    display:none;position:absolute;top:calc(100% + 4px);left:0;right:0;z-index:100;
+    background:var(--bg3);border:1px solid var(--border2);border-radius:8px;
+    padding:10px 14px;
+  }
+  .lookup-preview.show{display:block;}
+  .lookup-name{font-size:13px;font-weight:500;color:var(--text);margin-bottom:4px;}
+  .lookup-meta{display:flex;gap:8px;align-items:center;font-size:11px;font-family:var(--font-mono);}
+  .lookup-diff{padding:2px 7px;border-radius:4px;font-weight:500;}
+  .lookup-diff.easy{background:var(--easy-bg);color:var(--easy);}
+  .lookup-diff.medium{background:var(--med-bg);color:var(--med);}
+  .lookup-diff.hard{background:var(--hard-bg);color:var(--hard);}
+  .lookup-topic{color:var(--text3);}
+  .lookup-unknown{font-size:12px;color:var(--text3);font-family:var(--font-mono);}
+
+  input,select,textarea{background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:var(--font-sans);font-size:13px;padding:8px 12px;width:100%;outline:none;transition:border-color .15s;}
+  input:focus,select:focus,textarea:focus{border-color:var(--border2);}
+  textarea{resize:vertical;min-height:60px;}
+  select option{background:var(--bg3);}
+  button.primary{background:var(--accent);color:#000;border:none;border-radius:6px;padding:8px 18px;font-size:13px;font-weight:600;font-family:var(--font-mono);cursor:pointer;transition:opacity .15s;white-space:nowrap;}
+  button.primary:hover{opacity:.85;}
+  button.ghost{background:none;border:1px solid var(--border2);color:var(--text2);border-radius:6px;padding:5px 10px;font-size:11px;font-family:var(--font-mono);cursor:pointer;transition:all .15s;}
+  button.ghost:hover{background:var(--bg4);color:var(--text);}
+
+  .notes-toggle{font-size:11px;color:var(--text3);cursor:pointer;font-family:var(--font-mono);margin-top:4px;}
+  .notes-toggle:hover{color:var(--text2);}
+
+  table{width:100%;border-collapse:collapse;}
+  th{text-align:left;font-size:11px;color:var(--text3);font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.06em;padding:0 0 10px;border-bottom:1px solid var(--border);font-weight:500;}
+  td{padding:10px 0;border-bottom:1px solid var(--border);font-size:13px;vertical-align:middle;}
+  tr:last-child td{border-bottom:none;}
+  tr:hover td{background:rgba(255,255,255,.015);}
+  .diff-badge{font-size:10px;padding:2px 8px;border-radius:4px;font-family:var(--font-mono);font-weight:500;}
+  .diff-badge.easy{background:var(--easy-bg);color:var(--easy);}
+  .diff-badge.medium{background:var(--med-bg);color:var(--med);}
+  .diff-badge.hard{background:var(--hard-bg);color:var(--hard);}
+  .status-dot{width:6px;height:6px;border-radius:50%;display:inline-block;margin-right:6px;vertical-align:middle;}
+  .status-dot.solved{background:var(--easy);}
+  .status-dot.attempted{background:var(--med);}
+  .delete-btn{opacity:0;transition:opacity .15s;background:none;border:none;color:var(--hard);cursor:pointer;font-size:16px;padding:0 4px;}
+  tr:hover .delete-btn{opacity:1;}
+  .notes-cell{font-size:11px;color:var(--text3);font-family:var(--font-mono);max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
+  .goal-row{display:flex;align-items:center;gap:12px;margin-bottom:10px;}
+  .goal-label{font-size:12px;color:var(--text2);width:80px;font-family:var(--font-mono);flex-shrink:0;}
+  .goal-progress-bg{flex:1;height:8px;background:var(--bg4);border-radius:99px;overflow:hidden;}
+  .goal-progress-fill{height:100%;border-radius:99px;transition:width .5s;}
+  .goal-nums{font-size:11px;color:var(--text3);font-family:var(--font-mono);width:60px;text-align:right;flex-shrink:0;}
+
+  .full-cal{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;}
+  .full-cal-day{aspect-ratio:1;border-radius:3px;}
+  .full-cal-day.done{background:var(--easy);opacity:.75;}
+  .full-cal-day.miss{background:var(--bg4);}
+  .full-cal-day.today{background:var(--accent);}
+  .cal-labels{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-bottom:4px;}
+  .cal-label{font-size:10px;color:var(--text3);font-family:var(--font-mono);text-align:center;}
+
+  .chart-wrap{position:relative;width:100%;}
+
+  @media(max-width:900px){
+    .layout{grid-template-columns:1fr;}
+    .sidebar{position:static;height:auto;flex-direction:row;flex-wrap:wrap;}
+    .two-col{grid-template-columns:1fr;}
+    .form-row{grid-template-columns:1fr 1fr;}
+  }
+</style>
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="logo">LC<span>/</span>DASHBOARD</div>
+    <nav class="nav">
+      <button class="nav-item active" onclick="showSection('overview',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Overview
+      </button>
+      <button class="nav-item" onclick="showSection('log',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        Problem Log
+      </button>
+      <button class="nav-item" onclick="showSection('analytics',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        Analytics
+      </button>
+      <button class="nav-item" onclick="showSection('goals',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+        Goals
+      </button>
+      <button class="nav-item" onclick="showSection('streak',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        Streak
+      </button>
+    </nav>
+    <div class="sidebar-stats">
+      <div>
+        <div class="sidebar-stat-label">Current Streak</div>
+        <div style="display:flex;align-items:baseline;gap:4px;">
+          <span class="sidebar-streak-num" id="sb-streak">0</span>
+          <span class="sidebar-streak-label">days</span>
+        </div>
+      </div>
+      <div>
+        <div class="sidebar-stat-label">Last 21 days</div>
+        <div class="mini-calendar" id="mini-cal"></div>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main">
+
+    <!-- Overview -->
+    <section class="section active" id="section-overview">
+      <div>
+        <div class="page-title">Overview</div>
+        <div class="page-subtitle" id="overview-date"></div>
+      </div>
+      <div class="metric-grid" id="metrics"></div>
+      <div class="two-col">
+        <div class="card">
+          <div class="card-title">Difficulty breakdown</div>
+          <div class="rings-row" id="rings"></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Topic coverage</div>
+          <div id="topic-bars"></div>
+        </div>
+      </div>
+      <div class="two-col">
+        <div class="card">
+          <div class="card-title">Weak topics</div>
+          <div class="tag-row" id="weak-tags"></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Strong topics</div>
+          <div class="tag-row" id="strong-tags"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Problem Log -->
+    <section class="section" id="section-log">
+      <div>
+        <div class="page-title">Problem Log</div>
+        <div class="page-subtitle">type a number to auto-fill · 572 problems in database</div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Log a problem</div>
+        <div class="form-row">
+          <!-- Number input with lookup -->
+          <div class="lookup-wrap">
+            <input type="text" id="inp-num" placeholder="#  e.g. 1 or 200" oninput="onNumInput()" onblur="hideLookupDelayed()" autocomplete="off" />
+            <div class="lookup-preview" id="lookup-preview"></div>
+          </div>
+          <!-- Name (auto-filled or manual) -->
+          <input type="text" id="inp-name" placeholder="Problem name (auto-fills)" />
+          <select id="inp-diff">
+            <option value="easy">Easy</option>
+            <option value="medium" selected>Medium</option>
+            <option value="hard">Hard</option>
+          </select>
+          <select id="inp-topic">
+            <option>Arrays</option><option>Strings</option><option>Linked List</option>
+            <option>Trees</option><option>Graphs</option><option>DP</option>
+            <option>Binary Search</option><option>Sliding Window</option><option>Backtracking</option>
+            <option>Heap</option><option>Stack</option><option>Math</option>
+          </select>
+          <select id="inp-status" style="width:130px;">
+            <option value="solved">Solved</option>
+            <option value="attempted">Attempted</option>
+          </select>
+          <button class="primary" onclick="addProblem()">+ Log</button>
+        </div>
+        <div class="notes-toggle" onclick="toggleNotes()">+ add notes</div>
+        <div id="notes-wrap" style="display:none;margin-top:8px;">
+          <textarea id="inp-notes" placeholder="Notes, approach, time complexity..."></textarea>
+        </div>
+      </div>
+
+      <div class="card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
+          <div class="card-title" style="margin-bottom:0;">All problems</div>
+          <div style="display:flex;gap:6px;">
+            <select id="filter-diff" style="width:auto;font-size:11px;padding:4px 8px;" onchange="renderLog()">
+              <option value="">All diff</option>
+              <option value="easy">Easy</option>
+              <option value="medium">Medium</option>
+              <option value="hard">Hard</option>
+            </select>
+            <select id="filter-topic" style="width:auto;font-size:11px;padding:4px 8px;" onchange="renderLog()">
+              <option value="">All topics</option>
+            </select>
+            <select id="filter-status" style="width:auto;font-size:11px;padding:4px 8px;" onchange="renderLog()">
+              <option value="">All statuses</option>
+              <option value="solved">Solved</option>
+              <option value="attempted">Attempted</option>
+            </select>
+          </div>
+        </div>
+        <table>
+          <thead><tr>
+            <th style="width:50px;">#</th><th>Problem</th><th>Diff</th><th>Topic</th><th>Status</th><th>Date</th><th>Notes</th><th></th>
+          </tr></thead>
+          <tbody id="log-body"></tbody>
+        </table>
+        <div id="empty-log" style="padding:2rem;text-align:center;color:var(--text3);font-family:var(--font-mono);font-size:12px;display:none;">no problems logged yet</div>
+      </div>
+    </section>
+
+    <!-- Analytics -->
+    <section class="section" id="section-analytics">
+      <div>
+        <div class="page-title">Analytics</div>
+        <div class="page-subtitle">your performance over time</div>
+      </div>
+      <div class="card">
+        <div class="card-title">Daily solves — last 30 days</div>
+        <div class="chart-wrap" style="height:200px;">
+          <canvas id="daily-chart" role="img" aria-label="Bar chart of daily problem solves over last 30 days"></canvas>
+        </div>
+      </div>
+      <div class="two-col">
+        <div class="card">
+          <div class="card-title">Difficulty distribution</div>
+          <div class="chart-wrap" style="height:200px;">
+            <canvas id="diff-chart" role="img" aria-label="Doughnut chart by difficulty"></canvas>
+          </div>
+          <div id="diff-legend" style="display:flex;gap:16px;justify-content:center;margin-top:10px;font-size:11px;font-family:var(--font-mono);"></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Topic distribution</div>
+          <div class="chart-wrap" style="height:200px;">
+            <canvas id="topic-chart" role="img" aria-label="Doughnut chart by topic"></canvas>
+          </div>
+          <div id="topic-legend" style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:10px;font-size:10px;font-family:var(--font-mono);"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Cumulative progress</div>
+        <div class="chart-wrap" style="height:180px;">
+          <canvas id="cumulative-chart" role="img" aria-label="Line chart showing cumulative problems solved"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- Goals -->
+    <section class="section" id="section-goals">
+      <div>
+        <div class="page-title">Goals</div>
+        <div class="page-subtitle">set targets and track them</div>
+      </div>
+      <div class="card">
+        <div class="card-title">Set targets</div>
+        <div style="display:flex;flex-direction:column;gap:12px;" id="goal-inputs"></div>
+        <button class="primary" style="margin-top:1rem;width:auto;" onclick="saveGoals()">Save goals</button>
+      </div>
+      <div class="card">
+        <div class="card-title">Progress toward goals</div>
+        <div id="goal-progress"></div>
+      </div>
+    </section>
+
+    <!-- Streak -->
+    <section class="section" id="section-streak">
+      <div>
+        <div class="page-title">Streak Tracker</div>
+        <div class="page-subtitle">consistency is the real grind</div>
+      </div>
+      <div class="metric-grid">
+        <div class="metric-card"><div class="metric-label">Current streak</div><div class="metric-value accent" id="streak-current">0</div><div class="metric-sub">days</div></div>
+        <div class="metric-card"><div class="metric-label">Longest streak</div><div class="metric-value total" id="streak-longest">0</div><div class="metric-sub">days</div></div>
+        <div class="metric-card"><div class="metric-label">Active days</div><div class="metric-value total" id="streak-active">0</div><div class="metric-sub">total</div></div>
+        <div class="metric-card"><div class="metric-label">This month</div><div class="metric-value total" id="streak-month">0</div><div class="metric-sub">days</div></div>
+      </div>
+      <div class="card">
+        <div class="card-title">90-day activity calendar</div>
+        <div class="cal-labels"><div class="cal-label">Su</div><div class="cal-label">Mo</div><div class="cal-label">Tu</div><div class="cal-label">We</div><div class="cal-label">Th</div><div class="cal-label">Fr</div><div class="cal-label">Sa</div></div>
+        <div class="full-cal" id="full-cal"></div>
+        <div style="display:flex;align-items:center;gap:8px;margin-top:12px;font-size:11px;color:var(--text3);font-family:var(--font-mono);">
+          <span>less</span>
+          <div style="width:10px;height:10px;border-radius:2px;background:var(--bg4);"></div>
+          <div style="width:10px;height:10px;border-radius:2px;background:var(--easy);opacity:.75;"></div>
+          <div style="width:10px;height:10px;border-radius:2px;background:var(--accent);"></div>
+          <span>more / today</span>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+const LC_DB = {"1":{"name":"Two Sum","difficulty":"easy","topic":"Arrays"},"2":{"name":"Add Two Numbers","difficulty":"medium","topic":"Linked List"},"3":{"name":"Longest Substring Without Repeating Characters","difficulty":"medium","topic":"Sliding Window"},"4":{"name":"Median of Two Sorted Arrays","difficulty":"hard","topic":"Binary Search"},"5":{"name":"Longest Palindromic Substring","difficulty":"medium","topic":"DP"},"7":{"name":"Reverse Integer","difficulty":"medium","topic":"Math"},"9":{"name":"Palindrome Number","difficulty":"easy","topic":"Math"},"11":{"name":"Container With Most Water","difficulty":"medium","topic":"Arrays"},"13":{"name":"Roman to Integer","difficulty":"easy","topic":"Math"},"14":{"name":"Longest Common Prefix","difficulty":"easy","topic":"Strings"},"15":{"name":"3Sum","difficulty":"medium","topic":"Arrays"},"17":{"name":"Letter Combinations of a Phone Number","difficulty":"medium","topic":"Backtracking"},"19":{"name":"Remove Nth Node From End of List","difficulty":"medium","topic":"Linked List"},"20":{"name":"Valid Parentheses","difficulty":"easy","topic":"Stack"},"21":{"name":"Merge Two Sorted Lists","difficulty":"easy","topic":"Linked List"},"22":{"name":"Generate Parentheses","difficulty":"medium","topic":"Backtracking"},"23":{"name":"Merge k Sorted Lists","difficulty":"hard","topic":"Heap"},"24":{"name":"Swap Nodes in Pairs","difficulty":"medium","topic":"Linked List"},"25":{"name":"Reverse Nodes in k-Group","difficulty":"hard","topic":"Linked List"},"26":{"name":"Remove Duplicates from Sorted Array","difficulty":"easy","topic":"Arrays"},"27":{"name":"Remove Element","difficulty":"easy","topic":"Arrays"},"28":{"name":"Find the Index of the First Occurrence in a String","difficulty":"easy","topic":"Strings"},"31":{"name":"Next Permutation","difficulty":"medium","topic":"Arrays"},"32":{"name":"Longest Valid Parentheses","difficulty":"hard","topic":"Stack"},"33":{"name":"Search in Rotated Sorted Array","difficulty":"medium","topic":"Binary Search"},"34":{"name":"Find First and Last Position of Element in Sorted Array","difficulty":"medium","topic":"Binary Search"},"35":{"name":"Search Insert Position","difficulty":"easy","topic":"Binary Search"},"36":{"name":"Valid Sudoku","difficulty":"medium","topic":"Arrays"},"39":{"name":"Combination Sum","difficulty":"medium","topic":"Backtracking"},"40":{"name":"Combination Sum II","difficulty":"medium","topic":"Backtracking"},"41":{"name":"First Missing Positive","difficulty":"hard","topic":"Arrays"},"42":{"name":"Trapping Rain Water","difficulty":"hard","topic":"Arrays"},"43":{"name":"Multiply Strings","difficulty":"medium","topic":"Strings"},"45":{"name":"Jump Game II","difficulty":"medium","topic":"DP"},"46":{"name":"Permutations","difficulty":"medium","topic":"Backtracking"},"47":{"name":"Permutations II","difficulty":"medium","topic":"Backtracking"},"48":{"name":"Rotate Image","difficulty":"medium","topic":"Arrays"},"49":{"name":"Group Anagrams","difficulty":"medium","topic":"Strings"},"50":{"name":"Pow(x, n)","difficulty":"medium","topic":"Math"},"51":{"name":"N-Queens","difficulty":"hard","topic":"Backtracking"},"53":{"name":"Maximum Subarray","difficulty":"medium","topic":"DP"},"54":{"name":"Spiral Matrix","difficulty":"medium","topic":"Arrays"},"55":{"name":"Jump Game","difficulty":"medium","topic":"DP"},"56":{"name":"Merge Intervals","difficulty":"medium","topic":"Arrays"},"57":{"name":"Insert Interval","difficulty":"medium","topic":"Arrays"},"58":{"name":"Length of Last Word","difficulty":"easy","topic":"Strings"},"62":{"name":"Unique Paths","difficulty":"medium","topic":"DP"},"63":{"name":"Unique Paths II","difficulty":"medium","topic":"DP"},"64":{"name":"Minimum Path Sum","difficulty":"medium","topic":"DP"},"66":{"name":"Plus One","difficulty":"easy","topic":"Arrays"},"69":{"name":"Sqrt(x)","difficulty":"easy","topic":"Binary Search"},"70":{"name":"Climbing Stairs","difficulty":"easy","topic":"DP"},"72":{"name":"Edit Distance","difficulty":"hard","topic":"DP"},"73":{"name":"Set Matrix Zeroes","difficulty":"medium","topic":"Arrays"},"74":{"name":"Search a 2D Matrix","difficulty":"medium","topic":"Binary Search"},"75":{"name":"Sort Colors","difficulty":"medium","topic":"Arrays"},"76":{"name":"Minimum Window Substring","difficulty":"hard","topic":"Sliding Window"},"77":{"name":"Combinations","difficulty":"medium","topic":"Backtracking"},"78":{"name":"Subsets","difficulty":"medium","topic":"Backtracking"},"79":{"name":"Word Search","difficulty":"medium","topic":"Backtracking"},"80":{"name":"Remove Duplicates from Sorted Array II","difficulty":"medium","topic":"Arrays"},"82":{"name":"Remove Duplicates from Sorted List II","difficulty":"medium","topic":"Linked List"},"83":{"name":"Remove Duplicates from Sorted List","difficulty":"easy","topic":"Linked List"},"84":{"name":"Largest Rectangle in Histogram","difficulty":"hard","topic":"Stack"},"85":{"name":"Maximal Rectangle","difficulty":"hard","topic":"Stack"},"88":{"name":"Merge Sorted Array","difficulty":"easy","topic":"Arrays"},"90":{"name":"Subsets II","difficulty":"medium","topic":"Backtracking"},"91":{"name":"Decode Ways","difficulty":"medium","topic":"DP"},"92":{"name":"Reverse Linked List II","difficulty":"medium","topic":"Linked List"},"94":{"name":"Binary Tree Inorder Traversal","difficulty":"easy","topic":"Trees"},"95":{"name":"Unique Binary Search Trees II","difficulty":"medium","topic":"Trees"},"96":{"name":"Unique Binary Search Trees","difficulty":"medium","topic":"DP"},"98":{"name":"Validate Binary Search Tree","difficulty":"medium","topic":"Trees"},"100":{"name":"Same Tree","difficulty":"easy","topic":"Trees"},"101":{"name":"Symmetric Tree","difficulty":"easy","topic":"Trees"},"102":{"name":"Binary Tree Level Order Traversal","difficulty":"medium","topic":"Trees"},"103":{"name":"Binary Tree Zigzag Level Order Traversal","difficulty":"medium","topic":"Trees"},"104":{"name":"Maximum Depth of Binary Tree","difficulty":"easy","topic":"Trees"},"105":{"name":"Construct Binary Tree from Preorder and Inorder Traversal","difficulty":"medium","topic":"Trees"},"106":{"name":"Construct Binary Tree from Inorder and Postorder Traversal","difficulty":"medium","topic":"Trees"},"107":{"name":"Binary Tree Level Order Traversal II","difficulty":"medium","topic":"Trees"},"108":{"name":"Convert Sorted Array to Binary Search Tree","difficulty":"easy","topic":"Trees"},"110":{"name":"Balanced Binary Tree","difficulty":"easy","topic":"Trees"},"111":{"name":"Minimum Depth of Binary Tree","difficulty":"easy","topic":"Trees"},"112":{"name":"Path Sum","difficulty":"easy","topic":"Trees"},"113":{"name":"Path Sum II","difficulty":"medium","topic":"Trees"},"114":{"name":"Flatten Binary Tree to Linked List","difficulty":"medium","topic":"Trees"},"116":{"name":"Populating Next Right Pointers in Each Node","difficulty":"medium","topic":"Trees"},"118":{"name":"Pascal's Triangle","difficulty":"easy","topic":"Arrays"},"119":{"name":"Pascal's Triangle II","difficulty":"easy","topic":"Arrays"},"120":{"name":"Triangle","difficulty":"medium","topic":"DP"},"121":{"name":"Best Time to Buy and Sell Stock","difficulty":"easy","topic":"DP"},"122":{"name":"Best Time to Buy and Sell Stock II","difficulty":"medium","topic":"DP"},"124":{"name":"Binary Tree Maximum Path Sum","difficulty":"hard","topic":"Trees"},"125":{"name":"Valid Palindrome","difficulty":"easy","topic":"Strings"},"127":{"name":"Word Ladder","difficulty":"hard","topic":"Graphs"},"128":{"name":"Longest Consecutive Sequence","difficulty":"medium","topic":"Arrays"},"129":{"name":"Sum Root to Leaf Numbers","difficulty":"medium","topic":"Trees"},"130":{"name":"Surrounded Regions","difficulty":"medium","topic":"Graphs"},"131":{"name":"Palindrome Partitioning","difficulty":"medium","topic":"Backtracking"},"133":{"name":"Clone Graph","difficulty":"medium","topic":"Graphs"},"136":{"name":"Single Number","difficulty":"easy","topic":"Arrays"},"137":{"name":"Single Number II","difficulty":"medium","topic":"Arrays"},"138":{"name":"Copy List with Random Pointer","difficulty":"medium","topic":"Linked List"},"139":{"name":"Word Break","difficulty":"medium","topic":"DP"},"140":{"name":"Word Break II","difficulty":"hard","topic":"DP"},"141":{"name":"Linked List Cycle","difficulty":"easy","topic":"Linked List"},"142":{"name":"Linked List Cycle II","difficulty":"medium","topic":"Linked List"},"143":{"name":"Reorder List","difficulty":"medium","topic":"Linked List"},"144":{"name":"Binary Tree Preorder Traversal","difficulty":"easy","topic":"Trees"},"145":{"name":"Binary Tree Postorder Traversal","difficulty":"easy","topic":"Trees"},"146":{"name":"LRU Cache","difficulty":"medium","topic":"Linked List"},"148":{"name":"Sort List","difficulty":"medium","topic":"Linked List"},"150":{"name":"Evaluate Reverse Polish Notation","difficulty":"medium","topic":"Stack"},"151":{"name":"Reverse Words in a String","difficulty":"medium","topic":"Strings"},"152":{"name":"Maximum Product Subarray","difficulty":"medium","topic":"DP"},"153":{"name":"Find Minimum in Rotated Sorted Array","difficulty":"medium","topic":"Binary Search"},"155":{"name":"Min Stack","difficulty":"medium","topic":"Stack"},"160":{"name":"Intersection of Two Linked Lists","difficulty":"easy","topic":"Linked List"},"162":{"name":"Find Peak Element","difficulty":"medium","topic":"Binary Search"},"165":{"name":"Compare Version Numbers","difficulty":"medium","topic":"Strings"},"167":{"name":"Two Sum II - Input Array Is Sorted","difficulty":"medium","topic":"Binary Search"},"168":{"name":"Excel Sheet Column Title","difficulty":"easy","topic":"Math"},"169":{"name":"Majority Element","difficulty":"easy","topic":"Arrays"},"171":{"name":"Excel Sheet Column Number","difficulty":"easy","topic":"Math"},"172":{"name":"Factorial Trailing Zeroes","difficulty":"medium","topic":"Math"},"173":{"name":"Binary Search Tree Iterator","difficulty":"medium","topic":"Trees"},"179":{"name":"Largest Number","difficulty":"medium","topic":"Strings"},"189":{"name":"Rotate Array","difficulty":"medium","topic":"Arrays"},"190":{"name":"Reverse Bits","difficulty":"easy","topic":"Math"},"191":{"name":"Number of 1 Bits","difficulty":"easy","topic":"Math"},"198":{"name":"House Robber","difficulty":"medium","topic":"DP"},"199":{"name":"Binary Tree Right Side View","difficulty":"medium","topic":"Trees"},"200":{"name":"Number of Islands","difficulty":"medium","topic":"Graphs"},"201":{"name":"Bitwise AND of Numbers Range","difficulty":"medium","topic":"Math"},"202":{"name":"Happy Number","difficulty":"easy","topic":"Math"},"203":{"name":"Remove Linked List Elements","difficulty":"easy","topic":"Linked List"},"204":{"name":"Count Primes","difficulty":"medium","topic":"Math"},"205":{"name":"Isomorphic Strings","difficulty":"easy","topic":"Strings"},"206":{"name":"Reverse Linked List","difficulty":"easy","topic":"Linked List"},"207":{"name":"Course Schedule","difficulty":"medium","topic":"Graphs"},"208":{"name":"Implement Trie (Prefix Tree)","difficulty":"medium","topic":"Trees"},"209":{"name":"Minimum Size Subarray Sum","difficulty":"medium","topic":"Sliding Window"},"210":{"name":"Course Schedule II","difficulty":"medium","topic":"Graphs"},"211":{"name":"Design Add and Search Words Data Structure","difficulty":"medium","topic":"Trees"},"212":{"name":"Word Search II","difficulty":"hard","topic":"Backtracking"},"213":{"name":"House Robber II","difficulty":"medium","topic":"DP"},"215":{"name":"Kth Largest Element in an Array","difficulty":"medium","topic":"Heap"},"217":{"name":"Contains Duplicate","difficulty":"easy","topic":"Arrays"},"218":{"name":"The Skyline Problem","difficulty":"hard","topic":"Heap"},"219":{"name":"Contains Duplicate II","difficulty":"easy","topic":"Arrays"},"220":{"name":"Contains Duplicate III","difficulty":"hard","topic":"Arrays"},"221":{"name":"Maximal Square","difficulty":"medium","topic":"DP"},"222":{"name":"Count Complete Tree Nodes","difficulty":"medium","topic":"Trees"},"223":{"name":"Rectangle Area","difficulty":"medium","topic":"Math"},"224":{"name":"Basic Calculator","difficulty":"hard","topic":"Stack"},"225":{"name":"Implement Stack using Queues","difficulty":"easy","topic":"Stack"},"226":{"name":"Invert Binary Tree","difficulty":"easy","topic":"Trees"},"227":{"name":"Basic Calculator II","difficulty":"medium","topic":"Stack"},"228":{"name":"Summary Ranges","difficulty":"easy","topic":"Arrays"},"229":{"name":"Majority Element II","difficulty":"medium","topic":"Arrays"},"230":{"name":"Kth Smallest Element in a BST","difficulty":"medium","topic":"Trees"},"231":{"name":"Power of Two","difficulty":"easy","topic":"Math"},"232":{"name":"Implement Queue using Stacks","difficulty":"easy","topic":"Stack"},"234":{"name":"Palindrome Linked List","difficulty":"easy","topic":"Linked List"},"235":{"name":"Lowest Common Ancestor of a Binary Search Tree","difficulty":"medium","topic":"Trees"},"236":{"name":"Lowest Common Ancestor of a Binary Tree","difficulty":"medium","topic":"Trees"},"237":{"name":"Delete Node in a Linked List","difficulty":"medium","topic":"Linked List"},"238":{"name":"Product of Array Except Self","difficulty":"medium","topic":"Arrays"},"239":{"name":"Sliding Window Maximum","difficulty":"hard","topic":"Sliding Window"},"240":{"name":"Search a 2D Matrix II","difficulty":"medium","topic":"Binary Search"},"242":{"name":"Valid Anagram","difficulty":"easy","topic":"Strings"},"257":{"name":"Binary Tree Paths","difficulty":"easy","topic":"Trees"},"258":{"name":"Add Digits","difficulty":"easy","topic":"Math"},"260":{"name":"Single Number III","difficulty":"medium","topic":"Arrays"},"263":{"name":"Ugly Number","difficulty":"easy","topic":"Math"},"264":{"name":"Ugly Number II","difficulty":"medium","topic":"Heap"},"268":{"name":"Missing Number","difficulty":"easy","topic":"Arrays"},"269":{"name":"Alien Dictionary","difficulty":"hard","topic":"Graphs"},"273":{"name":"Integer to English Words","difficulty":"hard","topic":"Strings"},"274":{"name":"H-Index","difficulty":"medium","topic":"Arrays"},"278":{"name":"First Bad Version","difficulty":"easy","topic":"Binary Search"},"279":{"name":"Perfect Squares","difficulty":"medium","topic":"DP"},"283":{"name":"Move Zeroes","difficulty":"easy","topic":"Arrays"},"284":{"name":"Peeking Iterator","difficulty":"medium","topic":"Arrays"},"287":{"name":"Find the Duplicate Number","difficulty":"medium","topic":"Arrays"},"289":{"name":"Game of Life","difficulty":"medium","topic":"Arrays"},"290":{"name":"Word Pattern","difficulty":"easy","topic":"Strings"},"292":{"name":"Nim Game","difficulty":"easy","topic":"Math"},"295":{"name":"Find Median from Data Stream","difficulty":"hard","topic":"Heap"},"297":{"name":"Serialize and Deserialize Binary Tree","difficulty":"hard","topic":"Trees"},"300":{"name":"Longest Increasing Subsequence","difficulty":"medium","topic":"DP"},"301":{"name":"Remove Invalid Parentheses","difficulty":"hard","topic":"Backtracking"},"303":{"name":"Range Sum Query - Immutable","difficulty":"easy","topic":"DP"},"304":{"name":"Range Sum Query 2D - Immutable","difficulty":"medium","topic":"DP"},"307":{"name":"Range Sum Query - Mutable","difficulty":"medium","topic":"Trees"},"309":{"name":"Best Time to Buy and Sell Stock with Cooldown","difficulty":"medium","topic":"DP"},"310":{"name":"Minimum Height Trees","difficulty":"medium","topic":"Graphs"},"312":{"name":"Burst Balloons","difficulty":"hard","topic":"DP"},"315":{"name":"Count of Smaller Numbers After Self","difficulty":"hard","topic":"Trees"},"316":{"name":"Remove Duplicate Letters","difficulty":"medium","topic":"Stack"},"318":{"name":"Maximum Product of Word Lengths","difficulty":"medium","topic":"Arrays"},"319":{"name":"Bulb Switcher","difficulty":"medium","topic":"Math"},"322":{"name":"Coin Change","difficulty":"medium","topic":"DP"},"323":{"name":"Number of Connected Components in an Undirected Graph","difficulty":"medium","topic":"Graphs"},"324":{"name":"Wiggle Sort II","difficulty":"medium","topic":"Arrays"},"326":{"name":"Power of Three","difficulty":"easy","topic":"Math"},"328":{"name":"Odd Even Linked List","difficulty":"medium","topic":"Linked List"},"329":{"name":"Longest Increasing Path in a Matrix","difficulty":"hard","topic":"Graphs"},"332":{"name":"Reconstruct Itinerary","difficulty":"hard","topic":"Graphs"},"334":{"name":"Increasing Triplet Subsequence","difficulty":"medium","topic":"Arrays"},"336":{"name":"Palindrome Pairs","difficulty":"hard","topic":"Strings"},"337":{"name":"House Robber III","difficulty":"medium","topic":"Trees"},"338":{"name":"Counting Bits","difficulty":"easy","topic":"DP"},"341":{"name":"Flatten Nested List Iterator","difficulty":"medium","topic":"Stack"},"342":{"name":"Power of Four","difficulty":"easy","topic":"Math"},"343":{"name":"Integer Break","difficulty":"medium","topic":"DP"},"344":{"name":"Reverse String","difficulty":"easy","topic":"Strings"},"345":{"name":"Reverse Vowels of a String","difficulty":"easy","topic":"Strings"},"347":{"name":"Top K Frequent Elements","difficulty":"medium","topic":"Heap"},"349":{"name":"Intersection of Two Arrays","difficulty":"easy","topic":"Arrays"},"350":{"name":"Intersection of Two Arrays II","difficulty":"easy","topic":"Arrays"},"354":{"name":"Russian Doll Envelopes","difficulty":"hard","topic":"DP"},"355":{"name":"Design Twitter","difficulty":"medium","topic":"Heap"},"357":{"name":"Count Numbers with Unique Digits","difficulty":"medium","topic":"DP"},"367":{"name":"Valid Perfect Square","difficulty":"easy","topic":"Binary Search"},"368":{"name":"Largest Divisible Subset","difficulty":"medium","topic":"DP"},"371":{"name":"Sum of Two Integers","difficulty":"medium","topic":"Math"},"374":{"name":"Guess Number Higher or Lower","difficulty":"easy","topic":"Binary Search"},"376":{"name":"Wiggle Subsequence","difficulty":"medium","topic":"DP"},"377":{"name":"Combination Sum IV","difficulty":"medium","topic":"DP"},"378":{"name":"Kth Smallest Element in a Sorted Matrix","difficulty":"medium","topic":"Binary Search"},"380":{"name":"Insert Delete GetRandom O(1)","difficulty":"medium","topic":"Arrays"},"381":{"name":"Insert Delete GetRandom O(1) - Duplicates allowed","difficulty":"hard","topic":"Arrays"},"382":{"name":"Linked List Random Node","difficulty":"medium","topic":"Linked List"},"383":{"name":"Ransom Note","difficulty":"easy","topic":"Strings"},"384":{"name":"Shuffle an Array","difficulty":"medium","topic":"Arrays"},"385":{"name":"Mini Parser","difficulty":"medium","topic":"Stack"},"387":{"name":"First Unique Character in a String","difficulty":"easy","topic":"Strings"},"388":{"name":"Longest Absolute File Path","difficulty":"medium","topic":"Stack"},"389":{"name":"Find the Difference","difficulty":"easy","topic":"Strings"},"392":{"name":"Is Subsequence","difficulty":"easy","topic":"Strings"},"394":{"name":"Decode String","difficulty":"medium","topic":"Stack"},"395":{"name":"Longest Substring with At Least K Repeating Characters","difficulty":"medium","topic":"Sliding Window"},"399":{"name":"Evaluate Division","difficulty":"medium","topic":"Graphs"},"400":{"name":"Nth Digit","difficulty":"medium","topic":"Math"},"401":{"name":"Binary Watch","difficulty":"easy","topic":"Backtracking"},"402":{"name":"Remove K Digits","difficulty":"medium","topic":"Stack"},"404":{"name":"Sum of Left Leaves","difficulty":"easy","topic":"Trees"},"405":{"name":"Convert a Number to Hexadecimal","difficulty":"easy","topic":"Math"},"406":{"name":"Queue Reconstruction by Height","difficulty":"medium","topic":"Arrays"},"409":{"name":"Longest Palindrome","difficulty":"easy","topic":"Strings"},"410":{"name":"Split Array Largest Sum","difficulty":"hard","topic":"Binary Search"},"412":{"name":"Fizz Buzz","difficulty":"easy","topic":"Math"},"413":{"name":"Arithmetic Slices","difficulty":"medium","topic":"DP"},"414":{"name":"Third Maximum Number","difficulty":"easy","topic":"Arrays"},"415":{"name":"Add Strings","difficulty":"easy","topic":"Strings"},"416":{"name":"Partition Equal Subset Sum","difficulty":"medium","topic":"DP"},"417":{"name":"Pacific Atlantic Water Flow","difficulty":"medium","topic":"Graphs"},"421":{"name":"Maximum XOR of Two Numbers in an Array","difficulty":"medium","topic":"Math"},"424":{"name":"Longest Repeating Character Replacement","difficulty":"medium","topic":"Sliding Window"},"426":{"name":"Convert Binary Search Tree to Sorted Doubly Linked List","difficulty":"medium","topic":"Trees"},"427":{"name":"Construct Quad Tree","difficulty":"medium","topic":"Trees"},"429":{"name":"N-ary Tree Level Order Traversal","difficulty":"medium","topic":"Trees"},"430":{"name":"Flatten a Multilevel Doubly Linked List","difficulty":"medium","topic":"Linked List"},"433":{"name":"Minimum Genetic Mutation","difficulty":"medium","topic":"Graphs"},"435":{"name":"Non-overlapping Intervals","difficulty":"medium","topic":"Arrays"},"436":{"name":"Find Right Interval","difficulty":"medium","topic":"Binary Search"},"437":{"name":"Path Sum III","difficulty":"medium","topic":"Trees"},"438":{"name":"Find All Anagrams in a String","difficulty":"medium","topic":"Sliding Window"},"441":{"name":"Arranging Coins","difficulty":"easy","topic":"Binary Search"},"442":{"name":"Find All Duplicates in an Array","difficulty":"medium","topic":"Arrays"},"445":{"name":"Add Two Numbers II","difficulty":"medium","topic":"Linked List"},"446":{"name":"Arithmetic Slices II - Subsequence","difficulty":"hard","topic":"DP"},"448":{"name":"Find All Numbers Disappeared in an Array","difficulty":"easy","topic":"Arrays"},"449":{"name":"Serialize and Deserialize BST","difficulty":"medium","topic":"Trees"},"450":{"name":"Delete Node in a BST","difficulty":"medium","topic":"Trees"},"451":{"name":"Sort Characters By Frequency","difficulty":"medium","topic":"Heap"},"452":{"name":"Minimum Number of Arrows to Burst Balloons","difficulty":"medium","topic":"Arrays"},"454":{"name":"4Sum II","difficulty":"medium","topic":"Arrays"},"455":{"name":"Assign Cookies","difficulty":"easy","topic":"Arrays"},"456":{"name":"132 Pattern","difficulty":"medium","topic":"Stack"},"457":{"name":"Circular Array Loop","difficulty":"medium","topic":"Arrays"},"459":{"name":"Repeated Substring Pattern","difficulty":"easy","topic":"Strings"},"460":{"name":"LFU Cache","difficulty":"hard","topic":"Linked List"},"461":{"name":"Hamming Distance","difficulty":"easy","topic":"Math"},"463":{"name":"Island Perimeter","difficulty":"easy","topic":"Graphs"},"468":{"name":"Validate IP Address","difficulty":"medium","topic":"Strings"},"473":{"name":"Matchsticks to Square","difficulty":"medium","topic":"Backtracking"},"474":{"name":"Ones and Zeroes","difficulty":"medium","topic":"DP"},"476":{"name":"Number Complement","difficulty":"easy","topic":"Math"},"477":{"name":"Total Hamming Distance","difficulty":"medium","topic":"Math"},"478":{"name":"Generate Random Point in a Circle","difficulty":"medium","topic":"Math"},"480":{"name":"Sliding Window Median","difficulty":"hard","topic":"Sliding Window"},"485":{"name":"Max Consecutive Ones","difficulty":"easy","topic":"Arrays"},"486":{"name":"Predict the Winner","difficulty":"medium","topic":"DP"},"490":{"name":"The Maze","difficulty":"medium","topic":"Graphs"},"491":{"name":"Non-decreasing Subsequences","difficulty":"medium","topic":"Backtracking"},"494":{"name":"Target Sum","difficulty":"medium","topic":"DP"},"496":{"name":"Next Greater Element I","difficulty":"easy","topic":"Stack"},"498":{"name":"Diagonal Traverse","difficulty":"medium","topic":"Arrays"},"500":{"name":"Keyboard Row","difficulty":"easy","topic":"Strings"},"501":{"name":"Find Mode in Binary Search Tree","difficulty":"easy","topic":"Trees"},"503":{"name":"Next Greater Element II","difficulty":"medium","topic":"Stack"},"504":{"name":"Base 7","difficulty":"easy","topic":"Math"},"508":{"name":"Most Frequent Subtree Sum","difficulty":"medium","topic":"Trees"},"509":{"name":"Fibonacci Number","difficulty":"easy","topic":"DP"},"513":{"name":"Find Bottom Left Tree Value","difficulty":"medium","topic":"Trees"},"515":{"name":"Find Largest Value in Each Tree Row","difficulty":"medium","topic":"Trees"},"516":{"name":"Longest Palindromic Subsequence","difficulty":"medium","topic":"DP"},"518":{"name":"Coin Change II","difficulty":"medium","topic":"DP"},"520":{"name":"Detect Capital","difficulty":"easy","topic":"Strings"},"521":{"name":"Longest Uncommon Subsequence I","difficulty":"easy","topic":"Strings"},"523":{"name":"Continuous Subarray Sum","difficulty":"medium","topic":"Arrays"},"524":{"name":"Longest Word in Dictionary through Deleting","difficulty":"medium","topic":"Strings"},"525":{"name":"Contiguous Array","difficulty":"medium","topic":"Arrays"},"530":{"name":"Minimum Absolute Difference in BST","difficulty":"easy","topic":"Trees"},"532":{"name":"K-diff Pairs in an Array","difficulty":"medium","topic":"Arrays"},"535":{"name":"Encode and Decode TinyURL","difficulty":"medium","topic":"Strings"},"538":{"name":"Convert BST to Greater Tree","difficulty":"medium","topic":"Trees"},"539":{"name":"Minimum Time Difference","difficulty":"medium","topic":"Math"},"540":{"name":"Single Element in a Sorted Array","difficulty":"medium","topic":"Binary Search"},"541":{"name":"Reverse String II","difficulty":"easy","topic":"Strings"},"543":{"name":"Diameter of Binary Tree","difficulty":"easy","topic":"Trees"},"546":{"name":"Remove Boxes","difficulty":"hard","topic":"DP"},"547":{"name":"Number of Provinces","difficulty":"medium","topic":"Graphs"},"551":{"name":"Student Attendance Record I","difficulty":"easy","topic":"Strings"},"552":{"name":"Student Attendance Record II","difficulty":"hard","topic":"DP"},"556":{"name":"Next Greater Element III","difficulty":"medium","topic":"Math"},"557":{"name":"Reverse Words in a String III","difficulty":"easy","topic":"Strings"},"559":{"name":"Maximum Depth of N-ary Tree","difficulty":"easy","topic":"Trees"},"560":{"name":"Subarray Sum Equals K","difficulty":"medium","topic":"Arrays"},"563":{"name":"Binary Tree Tilt","difficulty":"easy","topic":"Trees"},"565":{"name":"Array Nesting","difficulty":"medium","topic":"Arrays"},"566":{"name":"Reshape the Matrix","difficulty":"easy","topic":"Arrays"},"567":{"name":"Permutation in String","difficulty":"medium","topic":"Sliding Window"},"572":{"name":"Subtree of Another Tree","difficulty":"easy","topic":"Trees"},"575":{"name":"Distribute Candies","difficulty":"easy","topic":"Arrays"},"576":{"name":"Out of Boundary Paths","difficulty":"medium","topic":"DP"},"581":{"name":"Shortest Unsorted Continuous Subarray","difficulty":"medium","topic":"Arrays"},"583":{"name":"Delete Operation for Two Strings","difficulty":"medium","topic":"DP"},"589":{"name":"N-ary Tree Preorder Traversal","difficulty":"easy","topic":"Trees"},"590":{"name":"N-ary Tree Postorder Traversal","difficulty":"easy","topic":"Trees"},"594":{"name":"Longest Harmonious Subsequence","difficulty":"easy","topic":"Arrays"},"598":{"name":"Range Addition II","difficulty":"easy","topic":"Arrays"},"599":{"name":"Minimum Index Sum of Two Lists","difficulty":"easy","topic":"Arrays"},"600":{"name":"Non-negative Integers without Consecutive Ones","difficulty":"hard","topic":"DP"},"605":{"name":"Can Place Flowers","difficulty":"easy","topic":"Arrays"},"606":{"name":"Construct String from Binary Tree","difficulty":"easy","topic":"Trees"},"609":{"name":"Find Duplicate File in System","difficulty":"medium","topic":"Strings"},"611":{"name":"Valid Triangle Number","difficulty":"medium","topic":"Arrays"},"617":{"name":"Merge Two Binary Trees","difficulty":"easy","topic":"Trees"},"621":{"name":"Task Scheduler","difficulty":"medium","topic":"Heap"},"622":{"name":"Design Circular Queue","difficulty":"medium","topic":"Arrays"},"623":{"name":"Add One Row to Tree","difficulty":"medium","topic":"Trees"},"628":{"name":"Maximum Product of Three Numbers","difficulty":"easy","topic":"Arrays"},"630":{"name":"Course Schedule III","difficulty":"hard","topic":"Heap"},"633":{"name":"Sum of Square Numbers","difficulty":"medium","topic":"Math"},"636":{"name":"Exclusive Time of Functions","difficulty":"medium","topic":"Stack"},"637":{"name":"Average of Levels in Binary Tree","difficulty":"easy","topic":"Trees"},"638":{"name":"Shopping Offers","difficulty":"medium","topic":"DP"},"640":{"name":"Solve the Equation","difficulty":"medium","topic":"Math"},"641":{"name":"Design Circular Deque","difficulty":"medium","topic":"Arrays"},"643":{"name":"Maximum Average Subarray I","difficulty":"easy","topic":"Sliding Window"},"645":{"name":"Set Mismatch","difficulty":"easy","topic":"Arrays"},"646":{"name":"Maximum Length of Pair Chain","difficulty":"medium","topic":"DP"},"647":{"name":"Palindromic Substrings","difficulty":"medium","topic":"DP"},"648":{"name":"Replace Words","difficulty":"medium","topic":"Trees"},"649":{"name":"Dota2 Senate","difficulty":"medium","topic":"Graphs"},"650":{"name":"2 Keys Keyboard","difficulty":"medium","topic":"DP"},"652":{"name":"Find Duplicate Subtrees","difficulty":"medium","topic":"Trees"},"653":{"name":"Two Sum IV - Input is a BST","difficulty":"easy","topic":"Trees"},"654":{"name":"Maximum Binary Tree","difficulty":"medium","topic":"Trees"},"655":{"name":"Print Binary Tree","difficulty":"medium","topic":"Trees"},"658":{"name":"Find K Closest Elements","difficulty":"medium","topic":"Binary Search"},"659":{"name":"Split Array into Consecutive Subsequences","difficulty":"medium","topic":"Heap"},"662":{"name":"Maximum Width of Binary Tree","difficulty":"medium","topic":"Trees"},"665":{"name":"Non-decreasing Array","difficulty":"medium","topic":"Arrays"},"667":{"name":"Beautiful Arrangement II","difficulty":"medium","topic":"Arrays"},"669":{"name":"Trim a Binary Search Tree","difficulty":"medium","topic":"Trees"},"670":{"name":"Maximum Swap","difficulty":"medium","topic":"Math"},"671":{"name":"Second Minimum Node In a Binary Tree","difficulty":"easy","topic":"Trees"},"673":{"name":"Number of Longest Increasing Subsequence","difficulty":"medium","topic":"DP"},"674":{"name":"Longest Continuous Increasing Subsequence","difficulty":"easy","topic":"Arrays"},"675":{"name":"Cut Off Trees for Golf Event","difficulty":"hard","topic":"Graphs"},"676":{"name":"Implement Magic Dictionary","difficulty":"medium","topic":"Trees"},"677":{"name":"Map Sum Pairs","difficulty":"medium","topic":"Trees"},"678":{"name":"Valid Parenthesis String","difficulty":"medium","topic":"Stack"},"680":{"name":"Valid Palindrome II","difficulty":"easy","topic":"Strings"},"684":{"name":"Redundant Connection","difficulty":"medium","topic":"Graphs"},"685":{"name":"Redundant Connection II","difficulty":"hard","topic":"Graphs"},"686":{"name":"Repeated String Match","difficulty":"medium","topic":"Strings"},"687":{"name":"Longest Univalue Path","difficulty":"medium","topic":"Trees"},"688":{"name":"Knight Probability in Chessboard","difficulty":"medium","topic":"DP"},"692":{"name":"Top K Frequent Words","difficulty":"medium","topic":"Heap"},"693":{"name":"Binary Number with Alternating Bits","difficulty":"easy","topic":"Math"},"695":{"name":"Max Area of Island","difficulty":"medium","topic":"Graphs"},"696":{"name":"Count Binary Substrings","difficulty":"easy","topic":"Strings"},"697":{"name":"Degree of an Array","difficulty":"easy","topic":"Arrays"},"698":{"name":"Partition to K Equal Sum Subsets","difficulty":"medium","topic":"Backtracking"},"700":{"name":"Search in a Binary Search Tree","difficulty":"easy","topic":"Trees"},"701":{"name":"Insert into a Binary Search Tree","difficulty":"medium","topic":"Trees"},"703":{"name":"Kth Largest Element in a Stream","difficulty":"easy","topic":"Heap"},"704":{"name":"Binary Search","difficulty":"easy","topic":"Binary Search"},"705":{"name":"Design HashSet","difficulty":"easy","topic":"Arrays"},"706":{"name":"Design HashMap","difficulty":"easy","topic":"Arrays"},"707":{"name":"Design Linked List","difficulty":"medium","topic":"Linked List"},"708":{"name":"Insert into a Sorted Circular Linked List","difficulty":"medium","topic":"Linked List"},"709":{"name":"To Lower Case","difficulty":"easy","topic":"Strings"},"712":{"name":"Minimum ASCII Delete Sum for Two Strings","difficulty":"medium","topic":"DP"},"713":{"name":"Subarray Product Less Than K","difficulty":"medium","topic":"Sliding Window"},"714":{"name":"Best Time to Buy and Sell Stock with Transaction Fee","difficulty":"medium","topic":"DP"},"718":{"name":"Maximum Length of Repeated Subarray","difficulty":"medium","topic":"DP"},"720":{"name":"Longest Word in Dictionary","difficulty":"medium","topic":"Trees"},"721":{"name":"Accounts Merge","difficulty":"medium","topic":"Graphs"},"724":{"name":"Find Pivot Index","difficulty":"easy","topic":"Arrays"},"725":{"name":"Split Linked List in Parts","difficulty":"medium","topic":"Linked List"},"726":{"name":"Number of Atoms","difficulty":"hard","topic":"Stack"},"728":{"name":"Self Dividing Numbers","difficulty":"easy","topic":"Math"},"729":{"name":"My Calendar I","difficulty":"medium","topic":"Binary Search"},"733":{"name":"Flood Fill","difficulty":"easy","topic":"Graphs"},"735":{"name":"Asteroid Collision","difficulty":"medium","topic":"Stack"},"739":{"name":"Daily Temperatures","difficulty":"medium","topic":"Stack"},"740":{"name":"Delete and Earn","difficulty":"medium","topic":"DP"},"743":{"name":"Network Delay Time","difficulty":"medium","topic":"Graphs"},"744":{"name":"Find Smallest Letter Greater Than Target","difficulty":"easy","topic":"Binary Search"},"746":{"name":"Min Cost Climbing Stairs","difficulty":"easy","topic":"DP"},"752":{"name":"Open the Lock","difficulty":"medium","topic":"Graphs"},"763":{"name":"Partition Labels","difficulty":"medium","topic":"Strings"},"764":{"name":"Largest Plus Sign","difficulty":"medium","topic":"DP"},"767":{"name":"Reorganize String","difficulty":"medium","topic":"Heap"},"771":{"name":"Jewels and Stones","difficulty":"easy","topic":"Strings"},"773":{"name":"Sliding Puzzle","difficulty":"hard","topic":"Graphs"},"778":{"name":"Swim in Rising Water","difficulty":"hard","topic":"Graphs"},"779":{"name":"K-th Symbol in Grammar","difficulty":"medium","topic":"Trees"},"780":{"name":"Reaching Points","difficulty":"hard","topic":"Math"},"781":{"name":"Rabbits in Forest","difficulty":"medium","topic":"Math"},"783":{"name":"Minimum Distance Between BST Nodes","difficulty":"easy","topic":"Trees"},"784":{"name":"Letter Case Permutation","difficulty":"medium","topic":"Backtracking"},"785":{"name":"Is Graph Bipartite?","difficulty":"medium","topic":"Graphs"},"787":{"name":"Cheapest Flights Within K Stops","difficulty":"medium","topic":"Graphs"},"788":{"name":"Rotated Digits","difficulty":"medium","topic":"DP"},"790":{"name":"Domino and Tromino Tiling","difficulty":"medium","topic":"DP"},"791":{"name":"Custom Sort String","difficulty":"medium","topic":"Strings"},"792":{"name":"Number of Matching Subsequences","difficulty":"medium","topic":"Strings"},"797":{"name":"All Paths From Source to Target","difficulty":"medium","topic":"Graphs"},"799":{"name":"Champagne Tower","difficulty":"medium","topic":"DP"},"801":{"name":"Minimum Swaps To Make Sequences Increasing","difficulty":"hard","topic":"DP"},"802":{"name":"Find Eventual Safe States","difficulty":"medium","topic":"Graphs"},"815":{"name":"Bus Routes","difficulty":"hard","topic":"Graphs"},"820":{"name":"Short Encoding of Words","difficulty":"medium","topic":"Trees"},"821":{"name":"Shortest Distance to a Character","difficulty":"easy","topic":"Strings"},"823":{"name":"Binary Trees With Factors","difficulty":"medium","topic":"DP"},"825":{"name":"Friends Of Appropriate Ages","difficulty":"medium","topic":"Arrays"},"826":{"name":"Most Profit Assigning Work","difficulty":"medium","topic":"Binary Search"},"827":{"name":"Making A Large Island","difficulty":"hard","topic":"Graphs"},"828":{"name":"Count Unique Characters of All Substrings of a Given String","difficulty":"hard","topic":"Strings"},"829":{"name":"Consecutive Numbers Sum","difficulty":"hard","topic":"Math"},"832":{"name":"Flipping an Image","difficulty":"easy","topic":"Arrays"},"835":{"name":"Image Overlap","difficulty":"medium","topic":"Arrays"},"836":{"name":"Rectangle Overlap","difficulty":"easy","topic":"Math"},"837":{"name":"New 21 Game","difficulty":"medium","topic":"DP"},"838":{"name":"Push Dominoes","difficulty":"medium","topic":"DP"},"841":{"name":"Keys and Rooms","difficulty":"medium","topic":"Graphs"},"844":{"name":"Backspace String Compare","difficulty":"easy","topic":"Stack"},"845":{"name":"Longest Mountain in Array","difficulty":"medium","topic":"Arrays"},"846":{"name":"Hand of Straights","difficulty":"medium","topic":"Heap"},"847":{"name":"Shortest Path Visiting All Nodes","difficulty":"hard","topic":"Graphs"},"848":{"name":"Shifting Letters","difficulty":"medium","topic":"Strings"},"849":{"name":"Maximize Distance to Closest Person","difficulty":"medium","topic":"Arrays"},"852":{"name":"Peak Index in a Mountain Array","difficulty":"medium","topic":"Binary Search"},"853":{"name":"Car Fleet","difficulty":"medium","topic":"Stack"},"856":{"name":"Score of Parentheses","difficulty":"medium","topic":"Stack"},"857":{"name":"Minimum Cost to Hire K Workers","difficulty":"hard","topic":"Heap"},"858":{"name":"Mirror Reflection","difficulty":"medium","topic":"Math"},"860":{"name":"Lemonade Change","difficulty":"easy","topic":"Arrays"},"863":{"name":"All Nodes Distance K in Binary Tree","difficulty":"medium","topic":"Trees"},"864":{"name":"Shortest Path to Get All Keys","difficulty":"hard","topic":"Graphs"},"865":{"name":"Smallest Subtree with all the Deepest Nodes","difficulty":"medium","topic":"Trees"},"867":{"name":"Transpose Matrix","difficulty":"easy","topic":"Arrays"},"868":{"name":"Binary Gap","difficulty":"easy","topic":"Math"},"869":{"name":"Reordered Power of 2","difficulty":"medium","topic":"Math"},"872":{"name":"Leaf-Similar Trees","difficulty":"easy","topic":"Trees"},"873":{"name":"Length of Longest Fibonacci Subsequence","difficulty":"medium","topic":"DP"},"874":{"name":"Walking Robot Simulation","difficulty":"medium","topic":"Arrays"},"875":{"name":"Koko Eating Bananas","difficulty":"medium","topic":"Binary Search"},"876":{"name":"Middle of the Linked List","difficulty":"easy","topic":"Linked List"},"877":{"name":"Stone Game","difficulty":"medium","topic":"DP"},"879":{"name":"Profitable Schemes","difficulty":"hard","topic":"DP"},"881":{"name":"Boats to Save People","difficulty":"medium","topic":"Arrays"},"883":{"name":"Projection Area of 3D Shapes","difficulty":"easy","topic":"Math"},"885":{"name":"Spiral Matrix III","difficulty":"medium","topic":"Arrays"},"886":{"name":"Possible Bipartition","difficulty":"medium","topic":"Graphs"},"889":{"name":"Construct Binary Tree from Preorder and Postorder Traversal","difficulty":"medium","topic":"Trees"},"890":{"name":"Find and Replace Pattern","difficulty":"medium","topic":"Strings"},"892":{"name":"Surface Area of 3D Shapes","difficulty":"easy","topic":"Math"},"893":{"name":"Groups of Special-Equivalent Strings","difficulty":"medium","topic":"Strings"},"895":{"name":"Maximum Frequency Stack","difficulty":"hard","topic":"Stack"},"896":{"name":"Monotonic Array","difficulty":"easy","topic":"Arrays"},"897":{"name":"Increasing Order Search Tree","difficulty":"easy","topic":"Trees"},"899":{"name":"Orderly Queue","difficulty":"hard","topic":"Strings"},"900":{"name":"RLE Iterator","difficulty":"medium","topic":"Arrays"},"901":{"name":"Online Stock Span","difficulty":"medium","topic":"Stack"},"902":{"name":"Numbers At Most N Given Digit Set","difficulty":"hard","topic":"DP"},"904":{"name":"Fruit Into Baskets","difficulty":"medium","topic":"Sliding Window"},"905":{"name":"Sort Array By Parity","difficulty":"easy","topic":"Arrays"},"907":{"name":"Sum of Subarray Minimums","difficulty":"medium","topic":"Stack"},"909":{"name":"Snakes and Ladders","difficulty":"medium","topic":"Graphs"},"912":{"name":"Sort an Array","difficulty":"medium","topic":"Arrays"},"916":{"name":"Word Subsets","difficulty":"medium","topic":"Strings"},"918":{"name":"Maximum Sum Circular Subarray","difficulty":"medium","topic":"DP"},"919":{"name":"Complete Binary Tree Inserter","difficulty":"medium","topic":"Trees"},"921":{"name":"Minimum Add to Make Parentheses Valid","difficulty":"medium","topic":"Stack"},"922":{"name":"Sort Array By Parity II","difficulty":"easy","topic":"Arrays"},"923":{"name":"3Sum With Multiplicity","difficulty":"medium","topic":"Arrays"},"926":{"name":"Flip String to Monotone Increasing","difficulty":"medium","topic":"DP"},"929":{"name":"Unique Email Addresses","difficulty":"easy","topic":"Strings"},"930":{"name":"Binary Subarrays With Sum","difficulty":"medium","topic":"Sliding Window"},"931":{"name":"Minimum Falling Path Sum","difficulty":"medium","topic":"DP"},"933":{"name":"Number of Recent Calls","difficulty":"easy","topic":"Arrays"},"934":{"name":"Shortest Bridge","difficulty":"medium","topic":"Graphs"},"935":{"name":"Knight Dialer","difficulty":"medium","topic":"DP"},"937":{"name":"Reorder Data in Log Files","difficulty":"medium","topic":"Strings"},"938":{"name":"Range Sum of BST","difficulty":"easy","topic":"Trees"},"941":{"name":"Valid Mountain Array","difficulty":"easy","topic":"Arrays"},"942":{"name":"DI String Match","difficulty":"easy","topic":"Arrays"},"944":{"name":"Delete Columns to Make Sorted","difficulty":"easy","topic":"Arrays"},"946":{"name":"Validate Stack Sequences","difficulty":"medium","topic":"Stack"},"947":{"name":"Most Stones Removed with Same Row or Column","difficulty":"medium","topic":"Graphs"},"948":{"name":"Bag of Tokens","difficulty":"medium","topic":"Arrays"},"949":{"name":"Largest Time for Given Digits","difficulty":"medium","topic":"Backtracking"},"950":{"name":"Reveal Cards In Increasing Order","difficulty":"medium","topic":"Arrays"},"951":{"name":"Flip Equivalent Binary Trees","difficulty":"medium","topic":"Trees"},"952":{"name":"Largest Component Size by Common Factor","difficulty":"hard","topic":"Graphs"},"953":{"name":"Verifying an Alien Dictionary","difficulty":"easy","topic":"Strings"},"954":{"name":"Array of Doubled Pairs","difficulty":"medium","topic":"Arrays"},"957":{"name":"Prison Cells After N Days","difficulty":"medium","topic":"Arrays"},"958":{"name":"Check Completeness of a Binary Tree","difficulty":"medium","topic":"Trees"},"959":{"name":"Regions Cut By Slashes","difficulty":"medium","topic":"Graphs"},"961":{"name":"N-Repeated Element in Size 2N Array","difficulty":"easy","topic":"Arrays"},"962":{"name":"Maximum Width Ramp","difficulty":"medium","topic":"Stack"},"965":{"name":"Univalued Binary Tree","difficulty":"easy","topic":"Trees"},"966":{"name":"Vowel Spellchecker","difficulty":"medium","topic":"Strings"},"967":{"name":"Numbers With Same Consecutive Differences","difficulty":"medium","topic":"Backtracking"},"968":{"name":"Binary Tree Cameras","difficulty":"hard","topic":"Trees"},"969":{"name":"Pancake Sorting","difficulty":"medium","topic":"Arrays"},"970":{"name":"Powerful Integers","difficulty":"medium","topic":"Math"},"971":{"name":"Flip Binary Tree To Match Preorder Traversal","difficulty":"medium","topic":"Trees"},"973":{"name":"K Closest Points to Origin","difficulty":"medium","topic":"Heap"},"974":{"name":"Subarray Sums Divisible by K","difficulty":"medium","topic":"Arrays"},"975":{"name":"Odd Even Jump","difficulty":"hard","topic":"Stack"},"976":{"name":"Largest Perimeter Triangle","difficulty":"medium","topic":"Arrays"},"977":{"name":"Squares of a Sorted Array","difficulty":"easy","topic":"Arrays"},"978":{"name":"Longest Turbulent Subarray","difficulty":"medium","topic":"Sliding Window"},"979":{"name":"Distribute Coins in Binary Tree","difficulty":"medium","topic":"Trees"},"980":{"name":"Unique Paths III","difficulty":"hard","topic":"Backtracking"},"981":{"name":"Time Based Key-Value Store","difficulty":"medium","topic":"Binary Search"},"983":{"name":"Minimum Cost For Tickets","difficulty":"medium","topic":"DP"},"984":{"name":"String Without AAA or BBB","difficulty":"medium","topic":"Strings"},"985":{"name":"Sum of Even Numbers After Queries","difficulty":"medium","topic":"Arrays"},"986":{"name":"Interval List Intersections","difficulty":"medium","topic":"Arrays"},"987":{"name":"Vertical Order Traversal of a Binary Tree","difficulty":"hard","topic":"Trees"},"988":{"name":"Smallest String Starting From Leaf","difficulty":"medium","topic":"Trees"},"989":{"name":"Add to Array-Form of Integer","difficulty":"easy","topic":"Arrays"},"990":{"name":"Satisfiability of Equality Equations","difficulty":"medium","topic":"Graphs"},"991":{"name":"Broken Calculator","difficulty":"medium","topic":"Math"},"992":{"name":"Subarrays with K Different Integers","difficulty":"hard","topic":"Sliding Window"},"993":{"name":"Cousins in Binary Tree","difficulty":"easy","topic":"Trees"},"994":{"name":"Rotting Oranges","difficulty":"medium","topic":"Graphs"},"997":{"name":"Find the Town Judge","difficulty":"easy","topic":"Graphs"},"999":{"name":"Available Captures for Rook","difficulty":"easy","topic":"Arrays"},"1000":{"name":"Minimum Cost to Merge Stones","difficulty":"hard","topic":"DP"}};
+
+const TOPICS = ['Arrays','Strings','Linked List','Trees','Graphs','DP','Binary Search','Sliding Window','Backtracking','Heap','Stack','Math'];
+const TOPIC_COLORS = ['#378add','#1d9e75','#d4537e','#ba7517','#7f77dd','#e84545','#0f6e56','#854f0b','#f0a500','#534ab7','#888','#00b37e'];
+const DIFF_TOTALS = {easy:850,medium:1790,hard:800};
+
+let problems = JSON.parse(localStorage.getItem('lc_probs_v3') || '[]');
+let goals = JSON.parse(localStorage.getItem('lc_goals_v2') || JSON.stringify({total:150,easy:50,medium:80,hard:20,streak:30}));
+
+function save(){ localStorage.setItem('lc_probs_v3', JSON.stringify(problems)); }
+
+// ── Number lookup ──
+let lookupHideTimer = null;
+function onNumInput(){
+  const val = document.getElementById('inp-num').value.trim();
+  const preview = document.getElementById('lookup-preview');
+  if(!val){ preview.className='lookup-preview'; return; }
+  const entry = LC_DB[val];
+  if(entry){
+    preview.className='lookup-preview show';
+    preview.innerHTML = '<div class="lookup-name">' + entry.name + '</div>' +
+      '<div class="lookup-meta"><span class="lookup-diff ' + entry.difficulty + '">' + entry.difficulty + '</span><span class="lookup-topic">' + entry.topic + '</span></div>';
+    document.getElementById('inp-name').value = entry.name;
+    setSelect('inp-diff', entry.difficulty);
+    setSelect('inp-topic', entry.topic);
+  } else {
+    preview.className='lookup-preview show';
+    preview.innerHTML = '<div class="lookup-unknown">problem #' + val + ' not in database — fill manually</div>';
+  }
+}
+function hideLookupDelayed(){
+  lookupHideTimer = setTimeout(()=>{ document.getElementById('lookup-preview').className='lookup-preview'; }, 200);
+}
+function setSelect(id, val){
+  const el = document.getElementById(id);
+  for(let o of el.options){ if(o.value===val){ el.value=val; break; } }
+}
+
+function addProblem(){
+  const num = document.getElementById('inp-num').value.trim();
+  const name = document.getElementById('inp-name').value.trim() || (num ? ('#' + num) : '');
+  if(!name){ document.getElementById('inp-num').focus(); return; }
+  const entry = num ? LC_DB[num] : null;
+  problems.unshift({
+    id: Date.now(),
+    num: num || '',
+    name: entry ? entry.name : name,
+    difficulty: document.getElementById('inp-diff').value,
+    topic: document.getElementById('inp-topic').value,
+    status: document.getElementById('inp-status').value,
+    notes: (document.getElementById('inp-notes')||{}).value?.trim() || '',
+    date: new Date().toISOString().split('T')[0]
+  });
+  save();
+  document.getElementById('inp-num').value='';
+  document.getElementById('inp-name').value='';
+  document.getElementById('lookup-preview').className='lookup-preview';
+  if(document.getElementById('inp-notes')) document.getElementById('inp-notes').value='';
+  renderAll();
+}
+
+function deleteProblem(id){ problems=problems.filter(p=>p.id!==id); save(); renderAll(); }
+
+function toggleNotes(){
+  const w=document.getElementById('notes-wrap');
+  w.style.display=w.style.display==='none'?'block':'none';
+}
+
+function showSection(name, btn){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('section-'+name).classList.add('active');
+  if(btn) btn.classList.add('active');
+  renderAll();
+}
+
+function getStreak(){
+  const dates=new Set(problems.filter(p=>p.status==='solved').map(p=>p.date));
+  const today=new Date(); let streak=0;
+  for(let i=0;i<366;i++){
+    const d=new Date(today); d.setDate(d.getDate()-i);
+    const ds=d.toISOString().split('T')[0];
+    if(dates.has(ds)) streak++;
+    else if(i>0) break;
+  }
+  return streak;
+}
+function getLongestStreak(){
+  const dates=[...new Set(problems.filter(p=>p.status==='solved').map(p=>p.date))].sort();
+  if(!dates.length) return 0;
+  let max=1,cur=1;
+  for(let i=1;i<dates.length;i++){
+    const diff=(new Date(dates[i])-new Date(dates[i-1]))/86400000;
+    if(diff===1){cur++;max=Math.max(max,cur);}else cur=1;
+  }
+  return max;
+}
+
+function renderMetrics(){
+  const solved=problems.filter(p=>p.status==='solved');
+  const easy=solved.filter(p=>p.difficulty==='easy').length;
+  const med=solved.filter(p=>p.difficulty==='medium').length;
+  const hard=solved.filter(p=>p.difficulty==='hard').length;
+  document.getElementById('metrics').innerHTML=
+    '<div class="metric-card"><div class="metric-label">Total solved</div><div class="metric-value total">'+solved.length+'</div><div class="metric-sub">problems</div></div>'+
+    '<div class="metric-card"><div class="metric-label">Easy</div><div class="metric-value easy">'+easy+'</div><div class="metric-sub">/ '+DIFF_TOTALS.easy+'</div></div>'+
+    '<div class="metric-card"><div class="metric-label">Medium</div><div class="metric-value med">'+med+'</div><div class="metric-sub">/ '+DIFF_TOTALS.medium+'</div></div>'+
+    '<div class="metric-card"><div class="metric-label">Hard</div><div class="metric-value hard">'+hard+'</div><div class="metric-sub">/ '+DIFF_TOTALS.hard+'</div></div>'+
+    '<div class="metric-card"><div class="metric-label">Attempted</div><div class="metric-value accent">'+problems.filter(p=>p.status==='attempted').length+'</div><div class="metric-sub">pending</div></div>';
+}
+
+function donut(solved,total,color,label){
+  const r=34,cx=42,cy=42,sw=8,circ=2*Math.PI*r;
+  const pct=total>0?Math.min(solved/total,1):0;
+  const dash=(pct*circ).toFixed(2);
+  return '<div class="ring-item"><svg width="84" height="84" viewBox="0 0 84 84" role="img" aria-label="'+label+': '+solved+'/'+total+'">'+
+    '<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="#222" stroke-width="'+sw+'"/>'+
+    '<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="'+color+'" stroke-width="'+sw+'" stroke-dasharray="'+dash+' '+circ.toFixed(2)+'" stroke-linecap="round" transform="rotate(-90 '+cx+' '+cy+')"/>'+
+    '<text x="'+cx+'" y="'+(cy-4)+'" text-anchor="middle" font-family="IBM Plex Mono" font-size="13" font-weight="500" fill="'+color+'">'+solved+'</text>'+
+    '<text x="'+cx+'" y="'+(cy+10)+'" text-anchor="middle" font-family="IBM Plex Mono" font-size="9" fill="#555">/'+total+'</text>'+
+    '</svg><div class="ring-label">'+label+'</div></div>';
+}
+
+function renderRings(){
+  const solved=problems.filter(p=>p.status==='solved');
+  document.getElementById('rings').innerHTML=
+    donut(solved.filter(p=>p.difficulty==='easy').length,DIFF_TOTALS.easy,'#00b37e','Easy')+
+    donut(solved.filter(p=>p.difficulty==='medium').length,DIFF_TOTALS.medium,'#f0a500','Medium')+
+    donut(solved.filter(p=>p.difficulty==='hard').length,DIFF_TOTALS.hard,'#e84545','Hard');
+}
+
+function renderTopicBars(){
+  const solved=problems.filter(p=>p.status==='solved');
+  const tc={};TOPICS.forEach(t=>tc[t]=0);
+  solved.forEach(p=>{if(tc[p.topic]!==undefined)tc[p.topic]++;});
+  const active=TOPICS.filter(t=>tc[t]>0).sort((a,b)=>tc[b]-tc[a]);
+  const max=Math.max(1,...active.map(t=>tc[t]));
+  const show=active.length?active:TOPICS.slice(0,6);
+  document.getElementById('topic-bars').innerHTML=show.map(t=>{
+    const c=TOPIC_COLORS[TOPICS.indexOf(t)]||'#888';
+    const w=Math.round(tc[t]/max*100);
+    return '<div class="topic-row"><div class="topic-name">'+t+'</div><div class="topic-bar-bg"><div class="topic-bar-fill" style="width:'+w+'%;background:'+c+';"></div></div><div class="topic-count">'+tc[t]+'</div></div>';
+  }).join('');
+}
+
+function renderWeakStrong(){
+  const td={};TOPICS.forEach(t=>td[t]={solved:0,total:0});
+  problems.forEach(p=>{
+    if(!td[p.topic])td[p.topic]={solved:0,total:0};
+    td[p.topic].total++;
+    if(p.status==='solved')td[p.topic].solved++;
+  });
+  const active=TOPICS.filter(t=>td[t].total>=2);
+  const byPct=t=>td[t].solved/td[t].total;
+  const weak=[...active].sort((a,b)=>byPct(a)-byPct(b)).slice(0,4);
+  const strong=[...active].sort((a,b)=>byPct(b)-byPct(a)).slice(0,4);
+  document.getElementById('weak-tags').innerHTML=weak.length?weak.map(t=>'<span class="tag weak">'+t+'</span>').join(''):'<span style="font-size:12px;color:var(--text3);font-family:var(--font-mono);">need more data</span>';
+  document.getElementById('strong-tags').innerHTML=strong.length?strong.map(t=>'<span class="tag strong">'+t+'</span>').join(''):'<span style="font-size:12px;color:var(--text3);font-family:var(--font-mono);">need more data</span>';
+}
+
+function renderLog(){
+  const fd=document.getElementById('filter-diff')?.value||'';
+  const ft=document.getElementById('filter-topic')?.value||'';
+  const fs=document.getElementById('filter-status')?.value||'';
+  const ts=document.getElementById('filter-topic');
+  if(ts&&ts.options.length<=1) TOPICS.forEach(t=>{const o=document.createElement('option');o.value=t;o.textContent=t;ts.appendChild(o);});
+  const filtered=problems.filter(p=>(!fd||p.difficulty===fd)&&(!ft||p.topic===ft)&&(!fs||p.status===fs));
+  const tbody=document.getElementById('log-body');
+  const empty=document.getElementById('empty-log');
+  if(!filtered.length){tbody.innerHTML='';empty.style.display='block';return;}
+  empty.style.display='none';
+  tbody.innerHTML=filtered.map(p=>'<tr>'+
+    '<td style="color:var(--text3);font-family:var(--font-mono);font-size:11px;">'+(p.num||'—')+'</td>'+
+    '<td style="font-weight:500;">'+p.name+'</td>'+
+    '<td><span class="diff-badge '+p.difficulty+'">'+p.difficulty+'</span></td>'+
+    '<td style="color:var(--text2);">'+p.topic+'</td>'+
+    '<td><span class="status-dot '+p.status+'"></span>'+p.status+'</td>'+
+    '<td style="color:var(--text3);font-family:var(--font-mono);font-size:11px;">'+p.date+'</td>'+
+    '<td><div class="notes-cell" title="'+(p.notes||'')+'">'+(p.notes||'—')+'</div></td>'+
+    '<td><button class="delete-btn" onclick="deleteProblem('+p.id+')">×</button></td>'+
+    '</tr>').join('');
+}
+
+let dChart,diffChart,topicChart,cumulChart;
+function renderAnalytics(){
+  const solved=problems.filter(p=>p.status==='solved');
+  const today=new Date(); const labels=[],dailyData=[],dateCounts={};
+  solved.forEach(p=>{dateCounts[p.date]=(dateCounts[p.date]||0)+1;});
+  for(let i=29;i>=0;i--){
+    const d=new Date(today);d.setDate(d.getDate()-i);
+    const ds=d.toISOString().split('T')[0];
+    labels.push(ds.slice(5));dailyData.push(dateCounts[ds]||0);
+  }
+  if(dChart)dChart.destroy();
+  dChart=new Chart(document.getElementById('daily-chart'),{type:'bar',data:{labels,datasets:[{label:'Solved',data:dailyData,backgroundColor:'#ffd20077',borderColor:'#ffd200',borderWidth:1,borderRadius:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#555',font:{family:'IBM Plex Mono',size:10},maxRotation:45,autoSkip:true,maxTicksLimit:10},grid:{color:'#1a1a1a'}},y:{ticks:{color:'#555',font:{family:'IBM Plex Mono',size:10},stepSize:1},grid:{color:'#1a1a1a'}}}}});
+  const ec=solved.filter(p=>p.difficulty==='easy').length,mc=solved.filter(p=>p.difficulty==='medium').length,hc=solved.filter(p=>p.difficulty==='hard').length;
+  if(diffChart)diffChart.destroy();
+  diffChart=new Chart(document.getElementById('diff-chart'),{type:'doughnut',data:{labels:['Easy','Medium','Hard'],datasets:[{data:[ec,mc,hc],backgroundColor:['#00b37e88','#f0a50088','#e8454588'],borderColor:['#00b37e','#f0a500','#e84545'],borderWidth:1}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},cutout:'65%'}});
+  document.getElementById('diff-legend').innerHTML=[['Easy','#00b37e',ec],['Medium','#f0a500',mc],['Hard','#e84545',hc]].map(([l,c,v])=>'<span style="display:flex;align-items:center;gap:4px;color:#888;"><span style="width:8px;height:8px;border-radius:2px;background:'+c+';flex-shrink:0;"></span>'+l+' '+v+'</span>').join('');
+  const topicCounts={};TOPICS.forEach(t=>topicCounts[t]=0);
+  solved.forEach(p=>{if(topicCounts[p.topic]!==undefined)topicCounts[p.topic]++;});
+  const at=TOPICS.filter(t=>topicCounts[t]>0);
+  if(topicChart)topicChart.destroy();
+  topicChart=new Chart(document.getElementById('topic-chart'),{type:'doughnut',data:{labels:at,datasets:[{data:at.map(t=>topicCounts[t]),backgroundColor:at.map(t=>TOPIC_COLORS[TOPICS.indexOf(t)]+'99'),borderColor:at.map(t=>TOPIC_COLORS[TOPICS.indexOf(t)]),borderWidth:1}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},cutout:'55%'}});
+  document.getElementById('topic-legend').innerHTML=at.map(t=>'<span style="display:flex;align-items:center;gap:3px;color:#666;"><span style="width:6px;height:6px;border-radius:50%;background:'+TOPIC_COLORS[TOPICS.indexOf(t)]+';flex-shrink:0;"></span>'+t+'</span>').join('');
+  const sortedDates=[...new Set(solved.map(p=>p.date))].sort();
+  const cl=[],cd=[];let running=0;
+  sortedDates.forEach(d=>{running+=solved.filter(p=>p.date===d).length;cl.push(d.slice(5));cd.push(running);});
+  if(cumulChart)cumulChart.destroy();
+  if(cl.length>0) cumulChart=new Chart(document.getElementById('cumulative-chart'),{type:'line',data:{labels:cl,datasets:[{label:'Total solved',data:cd,borderColor:'#ffd200',backgroundColor:'#ffd20011',fill:true,tension:0.4,pointRadius:2,pointBackgroundColor:'#ffd200'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#555',font:{family:'IBM Plex Mono',size:10},maxTicksLimit:8,autoSkip:true},grid:{color:'#1a1a1a'}},y:{ticks:{color:'#555',font:{family:'IBM Plex Mono',size:10}},grid:{color:'#1a1a1a'}}}}});
+}
+
+function renderGoals(){
+  const solved=problems.filter(p=>p.status==='solved');
+  const easy=solved.filter(p=>p.difficulty==='easy').length;
+  const med=solved.filter(p=>p.difficulty==='medium').length;
+  const hard=solved.filter(p=>p.difficulty==='hard').length;
+  const streak=getStreak();
+  document.getElementById('goal-inputs').innerHTML=[['total','Total solved',solved.length],['easy','Easy',easy],['medium','Medium',med],['hard','Hard',hard],['streak','Streak (days)',streak]].map(([k,l,v])=>'<div style="display:flex;gap:8px;align-items:center;"><span style="font-size:12px;color:var(--text2);width:120px;font-family:var(--font-mono);">'+l+'</span><input type="number" id="goal-'+k+'" value="'+goals[k]+'" style="max-width:80px;font-size:13px;font-family:var(--font-mono);" min="0" /><span style="font-size:11px;color:var(--text3);font-family:var(--font-mono);">current: '+v+'</span></div>').join('');
+  const items=[{label:'Total solved',current:solved.length,goal:goals.total,color:'#ffd200'},{label:'Easy',current:easy,goal:goals.easy,color:'#00b37e'},{label:'Medium',current:med,goal:goals.medium,color:'#f0a500'},{label:'Hard',current:hard,goal:goals.hard,color:'#e84545'},{label:'Streak',current:streak,goal:goals.streak,color:'#ffd200'}];
+  document.getElementById('goal-progress').innerHTML=items.map(it=>{
+    const pct=it.goal>0?Math.min(Math.round(it.current/it.goal*100),100):0;
+    return '<div class="goal-row"><div class="goal-label">'+it.label+'</div><div class="goal-progress-bg"><div class="goal-progress-fill" style="width:'+pct+'%;background:'+it.color+';"></div></div><div class="goal-nums">'+it.current+'/'+it.goal+'</div></div>';
+  }).join('');
+}
+
+function saveGoals(){
+  ['total','easy','medium','hard','streak'].forEach(k=>{const v=parseInt(document.getElementById('goal-'+k)?.value);if(!isNaN(v))goals[k]=v;});
+  localStorage.setItem('lc_goals_v2',JSON.stringify(goals));renderGoals();
+}
+
+function renderStreak(){
+  const dates=new Set(problems.filter(p=>p.status==='solved').map(p=>p.date));
+  const today=new Date(); const streak=getStreak(); const longest=getLongestStreak();
+  const thisMonth=new Date().getMonth();
+  const monthDays=[...dates].filter(d=>new Date(d).getMonth()===thisMonth).length;
+  document.getElementById('streak-current').textContent=streak;
+  document.getElementById('streak-longest').textContent=longest;
+  document.getElementById('streak-active').textContent=dates.size;
+  document.getElementById('streak-month').textContent=monthDays;
+  document.getElementById('sb-streak').textContent=streak;
+  let calHtml='';
+  for(let i=89;i>=0;i--){const d=new Date(today);d.setDate(d.getDate()-i);const ds=d.toISOString().split('T')[0];calHtml+='<div class="full-cal-day '+(i===0?'today':dates.has(ds)?'done':'miss')+'" title="'+ds+'"></div>';}
+  document.getElementById('full-cal').innerHTML=calHtml;
+  let miniHtml='';
+  for(let i=20;i>=0;i--){const d=new Date(today);d.setDate(d.getDate()-i);const ds=d.toISOString().split('T')[0];miniHtml+='<div class="mini-cal-day '+(i===0?'today':dates.has(ds)?'done':'miss')+'"></div>';}
+  document.getElementById('mini-cal').innerHTML=miniHtml;
+}
+
+function renderAll(){
+  document.getElementById('overview-date').textContent=new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  renderMetrics();renderRings();renderTopicBars();renderWeakStrong();
+  renderLog();renderAnalytics();renderGoals();renderStreak();
+}
+
+renderAll();
+</script>
+</body>
+</html>
