@@ -568,7 +568,7 @@ export const replaceWeekdayInternship = (day, dayIndex) => {
 };
 
 export const addWeekendInternship = (day, dayIndex) => {
-  if (!isWeekend(day) || day.sections.some(isInternshipSection)) return day;
+  if (!isWeekend(day) || day.sections.some(isInternshipSection) || dayIndex >= 45) return day;
 
   return {
     ...day,
@@ -666,7 +666,9 @@ export const removeApiProjectDays = (day) => {
     .filter((section) => !isApiProjectTask(section.label))
     .map((section) => ({
       ...section,
-      tasks: section.tasks.filter((task) => !isApiProjectTask(task)),
+      tasks: /resume|linkedin|profile/i.test(section.label)
+        ? section.tasks
+        : section.tasks.filter((task) => !isApiProjectTask(task)),
     }))
     .filter((section) => section.tasks.length > 0);
 
@@ -682,6 +684,19 @@ export const isDsaOrUdemyTask = (sectionLabel = "", taskText = "") => {
     combined.includes("c++ course") ||
     /video\s+\d+/i.test(combined) ||
     /videos\s+\d+/i.test(combined)
+  );
+};
+
+export const isProfileAuditTask = (sectionLabel = "", taskText = "") => {
+  const combined = `${sectionLabel} ${taskText}`.toLowerCase();
+  return (
+    combined.includes("profile audit") ||
+    combined.includes("linkedin") ||
+    combined.includes("resume") ||
+    combined.includes("portfolio") ||
+    combined.includes("github polish") ||
+    combined.includes("application prep") ||
+    combined.includes("checklist for cover letters")
   );
 };
 

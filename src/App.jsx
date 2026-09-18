@@ -15,36 +15,37 @@ import {
   PRIORITY_KEY,
   SECTION_PRIORITY_KEY,
   isDsaOrUdemyTask,
+  isProfileAuditTask,
 } from "./data/roadmapData";
 
 const LeetCodeDashboard = lazy(() => import("./LeetCodeDashboard"));
 
-const getInitialDsaChecked = () => {
-  const dsaMap = {};
+const getInitialCompletedChecked = () => {
+  const map = {};
   DAYS.forEach((d, di) => {
     d.sections.forEach((sec, si) => {
-      if (isDsaOrUdemyTask(sec.label)) {
-        sec.tasks.forEach((_, ti) => {
-          dsaMap[`${di}_${si}_${ti}`] = true;
-        });
-      }
+      sec.tasks.forEach((task, ti) => {
+        if (isDsaOrUdemyTask(sec.label, task) || isProfileAuditTask(sec.label, task)) {
+          map[`${di}_${si}_${ti}`] = true;
+        }
+      });
     });
   });
-  return dsaMap;
+  return map;
 };
 
 export default function App() {
   const [checked, setChecked] = useState(() => {
-    const dsaMap = getInitialDsaChecked();
+    const initialMap = getInitialCompletedChecked();
     try {
       const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
       if (saved && typeof saved === "object") {
-        return { ...dsaMap, ...saved };
+        return { ...saved, ...initialMap };
       }
     } catch {
       // fallback
     }
-    return dsaMap;
+    return initialMap;
   });
   const [customTasks, setCustomTasks] = useState(() => {
     try { return JSON.parse(localStorage.getItem(CUSTOM_TASKS_KEY) || "{}"); } catch { return {}; }
@@ -466,30 +467,50 @@ export default function App() {
     return { completedDays: completed, consistency: cons, currentStreak: curStk, bestStreak: bstStk };
   }, [checked, customTasks, extraTasks, curDay]);
 
-  const { leetCodeTaskCount, leetCodeDoneCount, dsaTaskCount, dsaDoneCount } = useMemo(() => {
+  const {
+    leetCodeTaskCount,
+    leetCodeDoneCount,
+    dsaTaskCount,
+    dsaDoneCount,
+    profileAuditTaskCount,
+    profileAuditDoneCount,
+  } = useMemo(() => {
     let lcTotal = 0;
     let lcDone = 0;
     let dsaTotal = 0;
     let dsaDone = 0;
+    let auditTotal = 0;
+    let auditDone = 0;
 
     DAYS.forEach((d, di) => {
       d.sections.forEach((sec, si) => {
         const isLC = /LeetCode/i.test(sec.label);
         const isDSA = isDsaOrUdemyTask(sec.label);
-        if (isLC || isDSA) {
-          const exCount = extraTasks[di]?.[si]?.length || 0;
-          const totalSec = sec.tasks.length + exCount;
-          const doneSec = sec.tasks.filter((_, ti) => checked[taskId(di, si, ti)]).length +
-            (extraTasks[di]?.[si] || []).filter((_, ei) => checked[extraTaskId(di, si, ei)]).length;
+        const isAuditSec = isProfileAuditTask(sec.label);
 
-          if (isLC) {
-            lcTotal += totalSec;
-            lcDone += doneSec;
-          }
-          if (isDSA) {
-            dsaTotal += totalSec;
-            dsaDone += doneSec;
-          }
+        const exCount = extraTasks[di]?.[si]?.length || 0;
+        const totalSec = sec.tasks.length + exCount;
+        const doneSec = sec.tasks.filter((_, ti) => checked[taskId(di, si, ti)]).length +
+          (extraTasks[di]?.[si] || []).filter((_, ei) => checked[extraTaskId(di, si, ei)]).length;
+
+        if (isLC) {
+          lcTotal += totalSec;
+          lcDone += doneSec;
+        }
+        if (isDSA) {
+          dsaTotal += totalSec;
+          dsaDone += doneSec;
+        }
+        if (isAuditSec) {
+          auditTotal += totalSec;
+          auditDone += doneSec;
+        } else {
+          sec.tasks.forEach((t, ti) => {
+            if (isProfileAuditTask("", t)) {
+              auditTotal++;
+              if (checked[taskId(di, si, ti)]) auditDone++;
+            }
+          });
         }
       });
     });
@@ -499,6 +520,8 @@ export default function App() {
       leetCodeDoneCount: lcDone,
       dsaTaskCount: dsaTotal,
       dsaDoneCount: dsaDone,
+      profileAuditTaskCount: auditTotal,
+      profileAuditDoneCount: auditDone,
     };
   }, [checked, extraTasks]);
 
@@ -507,7 +530,7 @@ export default function App() {
   const carryoverTasks = useMemo(() => {
     const planned = DAYS.slice(0, curDay).flatMap((prevDay, di) =>
       prevDay.sections.flatMap((sec, si) => {
-        if (isDsaOrUdemyTask(sec.label)) return [];
+        if (isDsaOrUdemyTask(sec.label) || isProfileAuditTask(sec.label)) return [];
         return sec.tasks
           .map((task, ti) => ({
             id: taskId(di, si, ti),
@@ -519,7 +542,7 @@ export default function App() {
             sectionLabel: sec.label,
             phaseColor: PHASE_INFO[prevDay.phase]?.color || "#00F0FF",
           }))
-          .filter((item) => !checked[item.id]);
+          .filter((item) => !checked[item.id] && !isProfileAuditTask(sec.label, item.task));
       })
     );
 
@@ -535,12 +558,12 @@ export default function App() {
           isCustom: true,
           phaseColor: "#00F0FF",
         }))
-        .filter((item) => !checked[item.id])
+        .filter((item) => !checked[item.id] && !isProfileAuditTask("", item.task))
     );
 
     const extra = DAYS.slice(0, curDay).flatMap((prevDay, di) =>
       prevDay.sections.flatMap((sec, si) => {
-        if (isDsaOrUdemyTask(sec.label)) return [];
+        if (isDsaOrUdemyTask(sec.label) || isProfileAuditTask(sec.label)) return [];
         return (extraTasks[di]?.[si] || [])
           .map((task, ei) => ({
             id: extraTaskId(di, si, ei),
@@ -552,7 +575,7 @@ export default function App() {
             sectionLabel: sec.label,
             phaseColor: PHASE_INFO[prevDay.phase]?.color || "#00F0FF",
           }))
-          .filter((item) => !checked[item.id]);
+          .filter((item) => !checked[item.id] && !isProfileAuditTask(sec.label, item.task));
       })
     );
 
@@ -746,6 +769,16 @@ export default function App() {
                 {dsaTaskCount ? Math.round((dsaDoneCount / dsaTaskCount) * 100) : 100}% ready
               </div>
             </div>
+
+            <div style={cardStyle}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: "#CBD5E1", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 6 }}>PROFILE AUDITS</div>
+              <div style={{ fontSize: 26, fontWeight: 800, color: "#38BDF8", fontFamily: "'JetBrains Mono', monospace" }}>
+                {profileAuditDoneCount}/{profileAuditTaskCount}
+              </div>
+              <div style={{ fontSize: 11.5, color: "#38BDF8", marginTop: 4, display: "flex", alignItems: "center", gap: 4, fontWeight: 600 }}>
+                {profileAuditTaskCount ? Math.round((profileAuditDoneCount / profileAuditTaskCount) * 100) : 100}% audited
+              </div>
+            </div>
           </div>
 
           {/* Reset & Status Banner */}
@@ -755,7 +788,7 @@ export default function App() {
             </div>
             <button
               type="button"
-              onClick={() => { if (window.confirm("Are you sure you want to reset all progress?")) setChecked(getInitialDsaChecked()); }}
+              onClick={() => { if (window.confirm("Are you sure you want to reset all progress?")) setChecked(getInitialCompletedChecked()); }}
               style={{
                 fontSize: 11.5,
                 fontWeight: 700,
@@ -1000,6 +1033,11 @@ export default function App() {
                         {isDsaOrUdemyTask(section.label) && (
                           <span style={{ fontSize: 11, fontWeight: 700, color: "#34D399", background: "rgba(52, 211, 153, 0.15)", border: "1px solid rgba(52, 211, 153, 0.4)", borderRadius: 4, padding: "2px 8px" }}>
                             READY (Udemy)
+                          </span>
+                        )}
+                        {isProfileAuditTask(section.label) && (
+                          <span style={{ fontSize: 11, fontWeight: 700, color: "#38BDF8", background: "rgba(56, 189, 248, 0.15)", border: "1px solid rgba(56, 189, 248, 0.4)", borderRadius: 4, padding: "2px 8px" }}>
+                            AUDITED
                           </span>
                         )}
                       </div>

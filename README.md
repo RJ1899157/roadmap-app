@@ -42,15 +42,16 @@ Deep analytics tracker featuring a 90-day activity contribution heatmap, streak 
 ## Key Features
 
 ### 1. 53-Day Daily Execution Engine
-- **Curated 4-Phase Curriculum**: 253 structured tasks organized across 53 days with zero artificial filler.
+- **Curated 4-Phase Curriculum**: 252 structured tasks organized across 53 days with zero artificial filler.
 - **Dynamic Carryover Backlog**: Missed tasks from past days automatically accumulate into a dedicated carryover backlog until resolved.
 - **Priority Tags**: Assign High, Medium, or Low priority badges to individual tasks or entire day sections.
 - **Roadmap AI Assistant**: Natural language input bar allowing you to schedule, shift, or redistribute tasks across days (e.g., `"move task from 23 May to 24 May"`).
 - **Extensible Workflows**: Add custom tasks and extra practice problems to any day on the fly with automatic local persistence.
 
-### 2. DSA & Core Curriculum Foundation
-- **122 Foundational DSA Tasks Marked Ready**: Pre-mapped to Abdul Bari algorithms course, recursion, linked lists, trees, graphs, sorting, and STL sprints.
-- **Intelligent Carryover Filtering**: Foundational courses already completed during the semester break are designated as `READY (Udemy)` so they never clutter the pending carryover backlog.
+### 2. DSA Foundation & Placement Profile Audits
+- **122 Foundational DSA Tasks Marked Ready**: Pre-mapped to Abdul Bari algorithms course, recursion, linked lists, trees, graphs, sorting, and STL sprints (`READY (Udemy)`).
+- **21 Placement Profile & Application Audits Marked Done**: All resume reviews, LinkedIn polish, GitHub repo showcases, cover letter prep, and profile audits are pre-cleared (`AUDITED`).
+- **Intelligent Carryover Filtering**: Foundational courses and completed profile audits never clutter the pending carryover backlog.
 
 ### 3. Full-Spectrum LeetCode Analytics Dashboard
 - **Comprehensive Problem Bank**: Instant $O(1)$ search and auto-complete across **3,935 LeetCode problems** (944 Easy, 2,057 Medium, 934 Hard).
@@ -71,22 +72,21 @@ Deep analytics tracker featuring a 90-day activity contribution heatmap, streak 
 
 ## Curriculum & Phase Breakdown (May 21 – July 12, 2026)
 
-| Phase | Timeline | Focus Area | Total Tasks | DSA Core (Ready) | Active Backlog |
-| :--- | :--- | :--- | :---: | :---: | :---: |
-| **Phase 1** | May 21 – Jun 1 | **Foundations**: Recursion, Arrays, Math, Two Pointers, Linked Lists | 74 | 46 | **28** |
-| **Phase 2** | Jun 2 – Jun 15 | **Linear Structures & Trees**: Stacks, Queues, Binary Trees, BSTs | 56 | 28 | **28** |
-| **Phase 3** | Jun 16 – Jun 29 | **Hashing, STL & Sorting**: Hash Maps, Heap/Priority Queue, Sorting Algorithms | 61 | 28 | **33** |
-| **Phase 4** | Jun 30 – Jul 12 | **Graphs, Projects & Placement Sprint**: Graph traversals, Portfolio build, Resume reviews & Mock rounds | 62 | 20 | **42** |
-| **Total** | **53 Days** | | **253** | **122** | **131** |
+| Phase | Timeline | Focus Area | Total Tasks | DSA Ready | Profile Audited | Active Backlog |
+| :--- | :--- | :--- | :---: | :---: | :---: | :---: |
+| **Phase 1** | May 21 – Jun 1 | **Foundations**: Recursion, Arrays, Math, Two Pointers, Linked Lists | 74 | 46 | 0 | **28** |
+| **Phase 2** | Jun 2 – Jun 15 | **Linear Structures & Trees**: Stacks, Queues, Binary Trees, BSTs | 56 | 28 | 0 | **28** |
+| **Phase 3** | Jun 16 – Jun 29 | **Hashing, STL & Sorting**: Hash Maps, Heap/Priority Queue, Sorting Algorithms | 61 | 28 | 0 | **33** |
+| **Phase 4** | Jun 30 – Jul 12 | **Graphs, Projects & Placement Sprint**: Graph traversals, Portfolio build, Final review | 61 | 20 | 21 | **20** |
+| **Total** | **53 Days** | | **252** | **122** | **21** | **109** |
 
-### Active Backlog Categories (131 Tasks)
-- **LeetCode Practice (66 tasks)**: High-yield placement problems (LC Top 75 / Blind 75 / Company-tagged).
+### Active Backlog Categories (109 Tasks)
+- **LeetCode Practice (64 tasks)**: High-yield placement problems (LC Top 75 / Blind 75 / Company-tagged).
 - **Cloud & Systems Certifications (18 tasks)**: AWS / GCP / Oracle cloud preparation and mock test series.
-- **Career, Resume & Portfolio (18 tasks)**: ATS resume optimization, LinkedIn profile polish, project showcases, and applications.
-- **Internship Deliverables (16 tasks)**: Code commits, architectural documentation, and feature delivery.
-- **Consolidation Checkpoints (5 tasks)**: Scheduled spaced repetition and problem revisit sessions.
-- **AI / Project Work (4 tasks)**: Applied AI engineering project sprint and evaluation.
-- **College Prep & Wrap-Up (4 tasks)**: Semester preparation, project wrap-up notes, and final profile audits.
+- **Internship Deliverables (13 tasks)**: Core feature implementation, documentation, and pull requests.
+- **Revision & Checkpoints (6 tasks)**: Scheduled spaced repetition and problem revisit sessions.
+- **Applied AI / Projects (4 tasks)**: Applied AI engineering project sprint and evaluation.
+- **Project Wrap-Up & College Prep (4 tasks)**: Final code notes, wrap-up doc, and next semester planning.
 
 ---
 
