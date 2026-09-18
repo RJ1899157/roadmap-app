@@ -1,4 +1,4 @@
-# 🚀 SWE Placement Sprint & Daily Focus Roadmap
+# SWE Placement Sprint & Daily Focus Roadmap
 
 > **A battle-tested daily execution roadmap, backlog carryover engine, and comprehensive LeetCode analytics dashboard built to prepare for college software engineering campus placements.**
 
@@ -10,7 +10,7 @@
 
 ---
 
-## 📌 Context & Motivation
+## Context & Motivation
 
 I built this personal command center to structure and dominate my **college placement season preparation** during my college semester break (**May 21, 2026 – July 12, 2026**, 53 consecutive days). 
 
@@ -25,7 +25,7 @@ Spreadsheets and static checklist apps quickly fell short because **tasks invari
 
 ---
 
-## 📸 Screenshots
+## Screenshots
 
 ### 1. Daily Execution & Real-Time Carryover Roadmap
 The main dashboard displays daily phase objectives, priority controls, completion stats, and the active carryover backlog.
@@ -39,20 +39,20 @@ Deep analytics tracker featuring a 90-day activity contribution heatmap, streak 
 
 ---
 
-## ✨ Key Features
+## Key Features
 
-### 📅 1. 53-Day Daily Execution Engine
+### 1. 53-Day Daily Execution Engine
 - **Curated 4-Phase Curriculum**: 253 structured tasks organized across 53 days with zero artificial filler.
 - **Dynamic Carryover Backlog**: Missed tasks from past days automatically accumulate into a dedicated carryover backlog until resolved.
 - **Priority Tags**: Assign High, Medium, or Low priority badges to individual tasks or entire day sections.
 - **Roadmap AI Assistant**: Natural language input bar allowing you to schedule, shift, or redistribute tasks across days (e.g., `"move task from 23 May to 24 May"`).
 - **Extensible Workflows**: Add custom tasks and extra practice problems to any day on the fly with automatic local persistence.
 
-### 🧠 2. DSA & Core Curriculum Foundation
+### 2. DSA & Core Curriculum Foundation
 - **122 Foundational DSA Tasks Marked Ready**: Pre-mapped to Abdul Bari algorithms course, recursion, linked lists, trees, graphs, sorting, and STL sprints.
-- **Intelligent Carryover Filtering**: Foundational courses already completed during the semester break are designated as `✓ READY (Udemy)` so they never clutter the pending carryover backlog.
+- **Intelligent Carryover Filtering**: Foundational courses already completed during the semester break are designated as `READY (Udemy)` so they never clutter the pending carryover backlog.
 
-### 📊 3. Full-Spectrum LeetCode Analytics Dashboard
+### 3. Full-Spectrum LeetCode Analytics Dashboard
 - **Comprehensive Problem Bank**: Instant $O(1)$ search and auto-complete across **3,935 LeetCode problems** (944 Easy, 2,057 Medium, 934 Hard).
 - **Interactive 90-Day Contribution Heatmap**: Visual GitHub-style activity grid displaying solve consistency, streak intensity, and date tooltips.
 - **SVG Progress Donut Rings**: Live progress rings for Easy (`#10B981`), Medium (`#F59E0B`), and Hard (`#EF4444`) compared against personal targets.
@@ -62,14 +62,14 @@ Deep analytics tracker featuring a 90-day activity contribution heatmap, streak 
 - **Striver A2Z Reference Integration**: Complete 456-problem reference sheet with local tracking, isolated from the daily roadmap to prevent backlog fatigue.
 - **1-Click CSV Export**: Instant backup of all solved problems, notes, code snippets, and timestamps.
 
-### ⚡ 4. High-Performance Cyber-Dark UI
+### 4. High-Performance Cyber-Dark UI
 - **Zero-Lag Architecture**: Root re-renders caused by 1-second clock ticks were decoupled into an isolated `<LiveClock />` component.
 - **Stitch-Inspired Cyber-Dark Theme**: Built with custom CSS design tokens, neon cyberpunk accents (`#00F0FF`, `#BF5AF2`, `#30D158`), JetBrains Mono typography, and smooth responsive layouts (up to 1560px).
 - **Deep Linking**: Switch between views directly using URL parameters (e.g. `/?tab=roadmap` or `/?tab=leetcode`).
 
 ---
 
-## 🗺️ Curriculum & Phase Breakdown (May 21 – July 12, 2026)
+## Curriculum & Phase Breakdown (May 21 – July 12, 2026)
 
 | Phase | Timeline | Focus Area | Total Tasks | DSA Core (Ready) | Active Backlog |
 | :--- | :--- | :--- | :---: | :---: | :---: |
@@ -90,7 +90,7 @@ Deep analytics tracker featuring a 90-day activity contribution heatmap, streak 
 
 ---
 
-## 🛠️ Tech Stack & Architecture
+## Tech Stack & Architecture
 
 - **Framework**: [React 19](https://react.dev/) with functional components and modern hooks (`useMemo`, `lazy`, `Suspense`)
 - **Bundler & Tooling**: [Vite 8](https://vitejs.dev/) with hot module replacement (HMR) and fast build output
@@ -101,7 +101,7 @@ Deep analytics tracker featuring a 90-day activity contribution heatmap, streak 
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 - [Node.js](https://nodejs.org/) (version 18.0.0 or higher recommended)
@@ -145,7 +145,7 @@ npm run preview
 
 ---
 
-## 📁 Repository Structure
+## Repository Structure
 
 ```
 roadmap-app/
@@ -171,13 +171,13 @@ roadmap-app/
 
 ---
 
-## 📄 License
+## License
 
 Distributed under the MIT License. See [LICENSE](LICENSE) for more information.
 
 ---
 
-## 💡 Acknowledgments
+## Acknowledgments
 
 - **Abdul Bari** for his unmatched Data Structures & Algorithms lectures.
 - **LeetCode** and the competitive programming community for curated problem sets.

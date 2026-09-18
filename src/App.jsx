@@ -743,7 +743,7 @@ export default function App() {
                 {dsaDoneCount}/{dsaTaskCount}
               </div>
               <div style={{ fontSize: 11.5, color: "#34D399", marginTop: 4, display: "flex", alignItems: "center", gap: 4, fontWeight: 600 }}>
-                ✓ {dsaTaskCount ? Math.round((dsaDoneCount / dsaTaskCount) * 100) : 100}% ready
+                {dsaTaskCount ? Math.round((dsaDoneCount / dsaTaskCount) * 100) : 100}% ready
               </div>
             </div>
           </div>
@@ -751,7 +751,7 @@ export default function App() {
           {/* Reset & Status Banner */}
           <div style={{ display: "flex", justifyContent: "space-between", gap: 12, marginBottom: 16, flexWrap: "wrap", alignItems: "center" }}>
             <div style={{ fontSize: 13, color: "#CBD5E1", fontWeight: 500 }}>
-              💡 Unfinished tasks from previous days automatically roll forward into the carryover backlog.
+              Note: Unfinished tasks from previous days automatically roll forward into the carryover backlog.
             </div>
             <button
               type="button"
@@ -999,7 +999,7 @@ export default function App() {
                         </span>
                         {isDsaOrUdemyTask(section.label) && (
                           <span style={{ fontSize: 11, fontWeight: 700, color: "#34D399", background: "rgba(52, 211, 153, 0.15)", border: "1px solid rgba(52, 211, 153, 0.4)", borderRadius: 4, padding: "2px 8px" }}>
-                            ✓ READY (Udemy)
+                            READY (Udemy)
                           </span>
                         )}
                       </div>
