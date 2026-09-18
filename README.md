@@ -6,7 +6,6 @@
 [![Vite](https://img.shields.io/badge/Vite-8.0-646CFF?logo=vite&logoColor=white)](https://vitejs.dev/)
 [![Lint](https://img.shields.io/badge/ESLint-Passing-4B32C3?logo=eslint&logoColor=white)](https://eslint.org/)
 [![Break Period](https://img.shields.io/badge/Timeline-May_2026_--_July_2026-00F0FF)](#curriculum--phase-breakdown-may-21--july-12-2026)
-[![License: MIT](https://img.shields.io/badge/License-MIT-30D158.svg)](LICENSE)
 
 ---
 
@@ -168,12 +167,6 @@ roadmap-app/
 ├── vite.config.js
 └── README.md
 ```
-
----
-
-## License
-
-Distributed under the MIT License. See [LICENSE](LICENSE) for more information.
 
 ---
 
