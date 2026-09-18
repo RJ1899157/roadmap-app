@@ -48,10 +48,13 @@ Deep analytics tracker featuring a 90-day activity contribution heatmap, streak 
 - **Roadmap AI Assistant**: Natural language input bar allowing you to schedule, shift, or redistribute tasks across days (e.g., `"move task from 23 May to 24 May"`).
 - **Extensible Workflows**: Add custom tasks and extra practice problems to any day on the fly with automatic local persistence.
 
-### 2. DSA Foundation & Placement Profile Audits
+### 2. Pre-Cleared Tracks & Intelligent Backlog Filtering
 - **122 Foundational DSA Tasks Marked Ready**: Pre-mapped to Abdul Bari algorithms course, recursion, linked lists, trees, graphs, sorting, and STL sprints (`READY (Udemy)`).
-- **21 Placement Profile & Application Audits Marked Done**: All resume reviews, LinkedIn polish, GitHub repo showcases, cover letter prep, and profile audits are pre-cleared (`AUDITED`).
-- **Intelligent Carryover Filtering**: Foundational courses and completed profile audits never clutter the pending carryover backlog.
+- **66 High-Yield LeetCode Tasks Cleared**: Placement problems across Blind 75, LeetCode Top 75, and company-tagged sets pre-cleared (`LEETCODE (Cleared)`).
+- **21 Placement Profile & Application Audits Marked Done**: All resume reviews, LinkedIn polish, GitHub repo showcases, cover letter prep, and profile audits pre-cleared (`AUDITED`).
+- **16 Marksman Internship Deliverables Cleared**: Weekend feature implementations, pull requests, sprint reviews, and internship deliverables pre-cleared (`INTERNSHIP (Cleared)`).
+- **3 AI/ML Project Modules Cleared**: Applied AI engineering, LangChain integration, car sales prediction model, and vector database sprint pre-cleared (`AI/ML (Cleared)`).
+- **Zero-Fatigue Carryover Engine**: All 228 pre-cleared tasks (90.5% of the curriculum) are automatically excluded from the dynamic carryover engine, leaving only 24 active high-priority items.
 
 ### 3. Full-Spectrum LeetCode Analytics Dashboard
 - **Comprehensive Problem Bank**: Instant $O(1)$ search and auto-complete across **3,935 LeetCode problems** (944 Easy, 2,057 Medium, 934 Hard).
@@ -72,21 +75,18 @@ Deep analytics tracker featuring a 90-day activity contribution heatmap, streak 
 
 ## Curriculum & Phase Breakdown (May 21 – July 12, 2026)
 
-| Phase | Timeline | Focus Area | Total Tasks | DSA Ready | Profile Audited | Active Backlog |
-| :--- | :--- | :--- | :---: | :---: | :---: | :---: |
-| **Phase 1** | May 21 – Jun 1 | **Foundations**: Recursion, Arrays, Math, Two Pointers, Linked Lists | 74 | 46 | 0 | **28** |
-| **Phase 2** | Jun 2 – Jun 15 | **Linear Structures & Trees**: Stacks, Queues, Binary Trees, BSTs | 56 | 28 | 0 | **28** |
-| **Phase 3** | Jun 16 – Jun 29 | **Hashing, STL & Sorting**: Hash Maps, Heap/Priority Queue, Sorting Algorithms | 61 | 28 | 0 | **33** |
-| **Phase 4** | Jun 30 – Jul 12 | **Graphs, Projects & Placement Sprint**: Graph traversals, Portfolio build, Final review | 61 | 20 | 21 | **20** |
-| **Total** | **53 Days** | | **252** | **122** | **21** | **109** |
+| Phase | Timeline | Focus Area | Total Tasks | DSA Ready | LeetCode Cleared | Profile Audited | Internship & AI/ML | Active Backlog |
+| :--- | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| **Phase 1** | May 21 – Jun 1 | **Foundations**: Recursion, Arrays, Math, Two Pointers, Linked Lists | 74 | 46 | 17 | 0 | 4 | **7** |
+| **Phase 2** | Jun 2 – Jun 15 | **Linear Structures & Trees**: Stacks, Queues, Binary Trees, BSTs | 56 | 28 | 15 | 0 | 6 | **7** |
+| **Phase 3** | Jun 16 – Jun 29 | **Hashing, STL & Sorting**: Hash Maps, Heap/Priority Queue, Sorting Algorithms | 61 | 28 | 20 | 0 | 6 | **7** |
+| **Phase 4** | Jun 30 – Jul 12 | **Graphs, Projects & Placement Sprint**: Graph traversals, Portfolio build, Final review | 61 | 20 | 14 | 21 | 3 | **3** |
+| **Total** | **53 Days** | | **252** | **122** | **66** | **21** | **19** | **24** |
 
-### Active Backlog Categories (109 Tasks)
-- **LeetCode Practice (64 tasks)**: High-yield placement problems (LC Top 75 / Blind 75 / Company-tagged).
-- **Cloud & Systems Certifications (18 tasks)**: AWS / GCP / Oracle cloud preparation and mock test series.
-- **Internship Deliverables (13 tasks)**: Core feature implementation, documentation, and pull requests.
-- **Revision & Checkpoints (6 tasks)**: Scheduled spaced repetition and problem revisit sessions.
-- **Applied AI / Projects (4 tasks)**: Applied AI engineering project sprint and evaluation.
-- **Project Wrap-Up & College Prep (4 tasks)**: Final code notes, wrap-up doc, and next semester planning.
+### Active Backlog Categories (24 Tasks)
+- **Cloud & Systems Certifications (18 tasks)**: AWS, GCP, and Oracle cloud architecture preparation modules, guided labs, and certification notes.
+- **Theory & Algorithmic Pattern Revision Notes (4 tasks)**: Spaced repetition pattern synthesis for Recursion, Arrays, Linked Lists, and Hash Maps.
+- **Semester Wrap-Up & College Prep (2 tasks)**: Summer projects outcome summary and post-vacation college semester DSA routine planning.
 
 ---
 

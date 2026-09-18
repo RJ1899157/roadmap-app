@@ -700,6 +700,47 @@ export const isProfileAuditTask = (sectionLabel = "", taskText = "") => {
   );
 };
 
+export const isInternshipTask = (sectionLabel = "", taskText = "") => {
+  const combined = `${sectionLabel} ${taskText}`.toLowerCase();
+  return (
+    combined.includes("internship") ||
+    combined.includes("marksman") ||
+    combined.includes("final project review") ||
+    combined.includes("project wrap")
+  );
+};
+
+export const isLeetCodeTask = (sectionLabel = "", taskText = "") => {
+  if (isDsaOrUdemyTask(sectionLabel)) return false;
+  const combined = `${sectionLabel} ${taskText}`.toLowerCase();
+  return (
+    combined.includes("leetcode") ||
+    /\blc\s*#?\s*\d+/i.test(combined)
+  );
+};
+
+export const isAiMlTask = (sectionLabel = "", taskText = "") => {
+  if (isProfileAuditTask(sectionLabel, taskText)) return false;
+  const combined = `${sectionLabel} ${taskText}`.toLowerCase();
+  return (
+    combined.includes("ai/ml") ||
+    combined.includes("ai / ml") ||
+    combined.includes("car sales") ||
+    combined.includes("langchain") ||
+    combined.includes("vector database")
+  );
+};
+
+export const isClearedTask = (sectionLabel = "", taskText = "") => {
+  return (
+    isDsaOrUdemyTask(sectionLabel, taskText) ||
+    isProfileAuditTask(sectionLabel, taskText) ||
+    isInternshipTask(sectionLabel, taskText) ||
+    isLeetCodeTask(sectionLabel, taskText) ||
+    isAiMlTask(sectionLabel, taskText)
+  );
+};
+
 export const DAYS = BASE_DAYS
   .map(rescheduleAbdulBariCourse)
   .map(replaceWeekdayInternship)

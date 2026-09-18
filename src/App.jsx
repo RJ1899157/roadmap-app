@@ -16,6 +16,10 @@ import {
   SECTION_PRIORITY_KEY,
   isDsaOrUdemyTask,
   isProfileAuditTask,
+  isInternshipTask,
+  isLeetCodeTask,
+  isAiMlTask,
+  isClearedTask,
 } from "./data/roadmapData";
 
 const LeetCodeDashboard = lazy(() => import("./LeetCodeDashboard"));
@@ -25,7 +29,7 @@ const getInitialCompletedChecked = () => {
   DAYS.forEach((d, di) => {
     d.sections.forEach((sec, si) => {
       sec.tasks.forEach((task, ti) => {
-        if (isDsaOrUdemyTask(sec.label, task) || isProfileAuditTask(sec.label, task)) {
+        if (isClearedTask(sec.label, task)) {
           map[`${di}_${si}_${ti}`] = true;
         }
       });
@@ -474,44 +478,68 @@ export default function App() {
     dsaDoneCount,
     profileAuditTaskCount,
     profileAuditDoneCount,
+    internshipTaskCount,
+    internshipDoneCount,
+    aiMlTaskCount,
+    aiMlDoneCount,
+    activeBacklogRemaining,
   } = useMemo(() => {
-    let lcTotal = 0;
-    let lcDone = 0;
-    let dsaTotal = 0;
-    let dsaDone = 0;
-    let auditTotal = 0;
-    let auditDone = 0;
+    let lcTotal = 0, lcDone = 0;
+    let dsaTotal = 0, dsaDone = 0;
+    let auditTotal = 0, auditDone = 0;
+    let internTotal = 0, internDone = 0;
+    let aimlTotal = 0, aimlDone = 0;
+    let activeRemaining = 0;
 
     DAYS.forEach((d, di) => {
       d.sections.forEach((sec, si) => {
-        const isLC = /LeetCode/i.test(sec.label);
-        const isDSA = isDsaOrUdemyTask(sec.label);
-        const isAuditSec = isProfileAuditTask(sec.label);
+        sec.tasks.forEach((t, ti) => {
+          const id = taskId(di, si, ti);
+          const isDone = !!checked[id];
 
-        const exCount = extraTasks[di]?.[si]?.length || 0;
-        const totalSec = sec.tasks.length + exCount;
-        const doneSec = sec.tasks.filter((_, ti) => checked[taskId(di, si, ti)]).length +
-          (extraTasks[di]?.[si] || []).filter((_, ei) => checked[extraTaskId(di, si, ei)]).length;
+          if (isDsaOrUdemyTask(sec.label, t)) {
+            dsaTotal++;
+            if (isDone) dsaDone++;
+          } else if (isProfileAuditTask(sec.label, t)) {
+            auditTotal++;
+            if (isDone) auditDone++;
+          } else if (isLeetCodeTask(sec.label, t)) {
+            lcTotal++;
+            if (isDone) lcDone++;
+          } else if (isInternshipTask(sec.label, t)) {
+            internTotal++;
+            if (isDone) internDone++;
+          } else if (isAiMlTask(sec.label, t)) {
+            aimlTotal++;
+            if (isDone) aimlDone++;
+          } else {
+            if (!isDone) activeRemaining++;
+          }
+        });
 
-        if (isLC) {
-          lcTotal += totalSec;
-          lcDone += doneSec;
-        }
-        if (isDSA) {
-          dsaTotal += totalSec;
-          dsaDone += doneSec;
-        }
-        if (isAuditSec) {
-          auditTotal += totalSec;
-          auditDone += doneSec;
-        } else {
-          sec.tasks.forEach((t, ti) => {
-            if (isProfileAuditTask("", t)) {
-              auditTotal++;
-              if (checked[taskId(di, si, ti)]) auditDone++;
-            }
-          });
-        }
+        // Extra tasks
+        (extraTasks[di]?.[si] || []).forEach((t, ei) => {
+          const id = extraTaskId(di, si, ei);
+          const isDone = !!checked[id];
+          if (isDsaOrUdemyTask(sec.label, t)) {
+            dsaTotal++;
+            if (isDone) dsaDone++;
+          } else if (isProfileAuditTask(sec.label, t)) {
+            auditTotal++;
+            if (isDone) auditDone++;
+          } else if (isLeetCodeTask(sec.label, t)) {
+            lcTotal++;
+            if (isDone) lcDone++;
+          } else if (isInternshipTask(sec.label, t)) {
+            internTotal++;
+            if (isDone) internDone++;
+          } else if (isAiMlTask(sec.label, t)) {
+            aimlTotal++;
+            if (isDone) aimlDone++;
+          } else {
+            if (!isDone) activeRemaining++;
+          }
+        });
       });
     });
 
@@ -522,6 +550,11 @@ export default function App() {
       dsaDoneCount: dsaDone,
       profileAuditTaskCount: auditTotal,
       profileAuditDoneCount: auditDone,
+      internshipTaskCount: internTotal,
+      internshipDoneCount: internDone,
+      aiMlTaskCount: aimlTotal,
+      aiMlDoneCount: aimlDone,
+      activeBacklogRemaining: activeRemaining,
     };
   }, [checked, extraTasks]);
 
@@ -530,7 +563,7 @@ export default function App() {
   const carryoverTasks = useMemo(() => {
     const planned = DAYS.slice(0, curDay).flatMap((prevDay, di) =>
       prevDay.sections.flatMap((sec, si) => {
-        if (isDsaOrUdemyTask(sec.label) || isProfileAuditTask(sec.label)) return [];
+        if (isClearedTask(sec.label)) return [];
         return sec.tasks
           .map((task, ti) => ({
             id: taskId(di, si, ti),
@@ -542,7 +575,7 @@ export default function App() {
             sectionLabel: sec.label,
             phaseColor: PHASE_INFO[prevDay.phase]?.color || "#00F0FF",
           }))
-          .filter((item) => !checked[item.id] && !isProfileAuditTask(sec.label, item.task));
+          .filter((item) => !checked[item.id] && !isClearedTask(sec.label, item.task));
       })
     );
 
@@ -558,12 +591,12 @@ export default function App() {
           isCustom: true,
           phaseColor: "#00F0FF",
         }))
-        .filter((item) => !checked[item.id] && !isProfileAuditTask("", item.task))
+        .filter((item) => !checked[item.id] && !isClearedTask("", item.task))
     );
 
     const extra = DAYS.slice(0, curDay).flatMap((prevDay, di) =>
       prevDay.sections.flatMap((sec, si) => {
-        if (isDsaOrUdemyTask(sec.label) || isProfileAuditTask(sec.label)) return [];
+        if (isClearedTask(sec.label)) return [];
         return (extraTasks[di]?.[si] || [])
           .map((task, ei) => ({
             id: extraTaskId(di, si, ei),
@@ -575,7 +608,7 @@ export default function App() {
             sectionLabel: sec.label,
             phaseColor: PHASE_INFO[prevDay.phase]?.color || "#00F0FF",
           }))
-          .filter((item) => !checked[item.id] && !isProfileAuditTask(sec.label, item.task));
+          .filter((item) => !checked[item.id] && !isClearedTask(sec.label, item.task));
       })
     );
 
@@ -752,11 +785,11 @@ export default function App() {
 
             <div style={cardStyle}>
               <div style={{ fontSize: 11, fontWeight: 700, color: "#CBD5E1", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 6 }}>LEETCODE TASKS</div>
-              <div style={{ fontSize: 26, fontWeight: 800, color: "#FFFFFF", fontFamily: "'JetBrains Mono', monospace" }}>
+              <div style={{ fontSize: 26, fontWeight: 800, color: "#10B981", fontFamily: "'JetBrains Mono', monospace" }}>
                 {leetCodeDoneCount}/{leetCodeTaskCount}
               </div>
-              <div style={{ fontSize: 11.5, color: "#94A3B8", marginTop: 4 }}>
-                {leetCodeTaskCount ? Math.round((leetCodeDoneCount / leetCodeTaskCount) * 100) : 0}% done
+              <div style={{ fontSize: 11.5, color: "#10B981", marginTop: 4, display: "flex", alignItems: "center", gap: 4, fontWeight: 600 }}>
+                {leetCodeTaskCount ? Math.round((leetCodeDoneCount / leetCodeTaskCount) * 100) : 100}% cleared
               </div>
             </div>
 
@@ -777,6 +810,26 @@ export default function App() {
               </div>
               <div style={{ fontSize: 11.5, color: "#38BDF8", marginTop: 4, display: "flex", alignItems: "center", gap: 4, fontWeight: 600 }}>
                 {profileAuditTaskCount ? Math.round((profileAuditDoneCount / profileAuditTaskCount) * 100) : 100}% audited
+              </div>
+            </div>
+
+            <div style={cardStyle}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: "#CBD5E1", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 6 }}>INTERNSHIP & AI/ML</div>
+              <div style={{ fontSize: 26, fontWeight: 800, color: "#BF5AF2", fontFamily: "'JetBrains Mono', monospace" }}>
+                {internshipDoneCount + aiMlDoneCount}/{internshipTaskCount + aiMlTaskCount}
+              </div>
+              <div style={{ fontSize: 11.5, color: "#BF5AF2", marginTop: 4, display: "flex", alignItems: "center", gap: 4, fontWeight: 600 }}>
+                {internshipTaskCount + aiMlTaskCount ? Math.round(((internshipDoneCount + aiMlDoneCount) / (internshipTaskCount + aiMlTaskCount)) * 100) : 100}% cleared
+              </div>
+            </div>
+
+            <div style={cardStyle}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: "#CBD5E1", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 6 }}>ACTIVE BACKLOG</div>
+              <div style={{ fontSize: 26, fontWeight: 800, color: "#F59E0B", fontFamily: "'JetBrains Mono', monospace" }}>
+                {activeBacklogRemaining}
+              </div>
+              <div style={{ fontSize: 11.5, color: "#F59E0B", marginTop: 4, display: "flex", alignItems: "center", gap: 4, fontWeight: 600 }}>
+                Certifications & Revision
               </div>
             </div>
           </div>
@@ -1038,6 +1091,21 @@ export default function App() {
                         {isProfileAuditTask(section.label) && (
                           <span style={{ fontSize: 11, fontWeight: 700, color: "#38BDF8", background: "rgba(56, 189, 248, 0.15)", border: "1px solid rgba(56, 189, 248, 0.4)", borderRadius: 4, padding: "2px 8px" }}>
                             AUDITED
+                          </span>
+                        )}
+                        {isInternshipTask(section.label) && (
+                          <span style={{ fontSize: 11, fontWeight: 700, color: "#BF5AF2", background: "rgba(191, 90, 242, 0.15)", border: "1px solid rgba(191, 90, 242, 0.4)", borderRadius: 4, padding: "2px 8px" }}>
+                            INTERNSHIP (Cleared)
+                          </span>
+                        )}
+                        {isLeetCodeTask(section.label) && (
+                          <span style={{ fontSize: 11, fontWeight: 700, color: "#10B981", background: "rgba(16, 185, 129, 0.15)", border: "1px solid rgba(16, 185, 129, 0.4)", borderRadius: 4, padding: "2px 8px" }}>
+                            LEETCODE (Cleared)
+                          </span>
+                        )}
+                        {isAiMlTask(section.label) && (
+                          <span style={{ fontSize: 11, fontWeight: 700, color: "#F59E0B", background: "rgba(245, 158, 11, 0.15)", border: "1px solid rgba(245, 158, 11, 0.4)", borderRadius: 4, padding: "2px 8px" }}>
+                            AI/ML (Cleared)
                           </span>
                         )}
                       </div>
