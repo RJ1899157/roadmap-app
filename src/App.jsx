@@ -24,6 +24,20 @@ import {
 
 const LeetCodeDashboard = lazy(() => import("./LeetCodeDashboard"));
 
+const CheckIcon = ({ color = "#050811", size = 11 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="20 6 9 17 4 12" />
+  </svg>
+);
+
+const ExternalLinkIcon = ({ size = 11 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ display: "inline-block", verticalAlign: "middle", marginLeft: 4 }}>
+    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+    <polyline points="15 3 21 3 21 9" />
+    <line x1="10" y1="14" x2="21" y2="3" />
+  </svg>
+);
+
 const getInitialCompletedChecked = () => {
   const map = {};
   DAYS.forEach((d, di) => {
@@ -76,6 +90,33 @@ export default function App() {
     }
     return "roadmap";
   });
+
+  const handleSelectView = (view) => {
+    setActiveView(view);
+    if (typeof window !== "undefined") {
+      const url = new URL(window.location.href);
+      if (view === "leetcode") {
+        url.searchParams.set("tab", "leetcode");
+      } else {
+        url.searchParams.delete("tab");
+      }
+      window.history.replaceState(null, "", url.toString());
+    }
+  };
+
+  useEffect(() => {
+    const handlePopState = () => {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("tab") === "leetcode" || window.location.hash === "#leetcode") {
+        setActiveView("leetcode");
+      } else {
+        setActiveView("roadmap");
+      }
+    };
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, []);
+
   const [chatInput, setChatInput] = useState("");
   const [chatMessages, setChatMessages] = useState(() => [
     {
@@ -625,6 +666,8 @@ export default function App() {
             <button
               key={buttonValue}
               type="button"
+              aria-label={`Set priority ${buttonValue}`}
+              aria-pressed={active}
               onClick={(event) => { event.stopPropagation(); updatePriority(id, active ? null : buttonValue, isSection); }}
               style={{
                 minWidth: 20,
@@ -647,6 +690,7 @@ export default function App() {
         {value ? (
           <button
             type="button"
+            aria-label="Clear priority"
             onClick={(event) => { event.stopPropagation(); clearPriority(id, isSection); }}
             style={{ fontSize: 10, padding: "2px 6px", borderRadius: 4, border: "1px solid rgba(239, 68, 68, 0.3)", background: "transparent", color: "#F87171", cursor: "pointer", fontFamily: "'JetBrains Mono', monospace" }}
           >
@@ -685,7 +729,7 @@ export default function App() {
             </div>
 
             {/* Navigation Tabs */}
-            <div style={{ display: "flex", gap: 10, marginTop: 16 }}>
+            <div role="tablist" aria-label="Main Navigation Tabs" style={{ display: "flex", gap: 10, marginTop: 16 }}>
               {[
                 ["roadmap", "ROADMAP VIEW"],
                 ["leetcode", "LEETCODE TRACKER"],
@@ -695,7 +739,10 @@ export default function App() {
                   <button
                     key={view}
                     type="button"
-                    onClick={() => setActiveView(view)}
+                    role="tab"
+                    aria-selected={active}
+                    aria-controls={`${view}-view-panel`}
+                    onClick={() => handleSelectView(view)}
                     style={{
                       fontSize: 12,
                       fontWeight: 700,
@@ -904,6 +951,7 @@ export default function App() {
               <input
                 value={chatInput}
                 onChange={(e) => setChatInput(e.target.value)}
+                aria-label="Roadmap AI natural language command"
                 placeholder="e.g. 'add internship meeting to 23 May' or 'move task from 23 May to 24 May'"
                 style={{
                   flex: 1,
@@ -920,6 +968,7 @@ export default function App() {
               />
               <button
                 type="submit"
+                aria-label="Execute command"
                 style={{
                   padding: "10px 18px",
                   borderRadius: 6,
@@ -952,6 +1001,9 @@ export default function App() {
               return (
                 <button
                   key={di}
+                  type="button"
+                  aria-label={`Day ${di + 1}, ${d.d}${isActive ? " (Selected)" : ""}`}
+                  aria-pressed={isActive}
                   onClick={() => setCurDay(di)}
                   style={{
                     padding: "9px 4px",
@@ -1036,6 +1088,9 @@ export default function App() {
                       >
                         <button
                           type="button"
+                          role="checkbox"
+                          aria-checked={false}
+                          aria-label={`Mark carryover task completed: ${item.task}`}
                           onClick={(event) => {
                             event.stopPropagation();
                             item.isCustom ? toggleById(item.id) : toggle(item.dayIndex, item.sectionIndex, item.taskIndex);
@@ -1055,7 +1110,7 @@ export default function App() {
                         <div style={{ display: "grid", gap: 2, flex: 1 }}>
                           {href ? (
                             <a href={href} target="_blank" rel="noreferrer" style={{ fontSize: 13.5, color: "#FEF08A", lineHeight: 1.5, textDecoration: "none", fontWeight: 600 }}>
-                              {item.task} ↗
+                              {item.task} <ExternalLinkIcon />
                             </a>
                           ) : (
                             <span style={{ fontSize: 13.5, color: "#FEF08A", lineHeight: 1.5, fontWeight: 500 }}>{item.task}</span>
@@ -1142,6 +1197,9 @@ export default function App() {
                         >
                           <button
                             type="button"
+                            role="checkbox"
+                            aria-checked={done}
+                            aria-label={`Mark task ${done ? "uncompleted" : "completed"}: ${task}`}
                             onClick={(event) => { event.stopPropagation(); toggle(curDay, si, ti); }}
                             style={{
                               width: 18,
@@ -1158,7 +1216,7 @@ export default function App() {
                               padding: 0,
                             }}
                           >
-                            {done && <span style={{ fontSize: 11, color: "#050811", fontWeight: 800 }}>✓</span>}
+                            {done && <CheckIcon />}
                           </button>
                           <div style={{ flex: 1 }}>
                             {href ? (
@@ -1168,7 +1226,7 @@ export default function App() {
                                 rel="noreferrer"
                                 style={{ fontSize: 13.5, color: done ? "#94A3B8" : "#38BDF8", textDecoration: done ? "line-through" : "none", lineHeight: 1.5, fontWeight: done ? 400 : 600 }}
                               >
-                                {task} ↗
+                                {task} <ExternalLinkIcon />
                               </a>
                             ) : (
                               <span style={{ fontSize: 13.5, color: done ? "#94A3B8" : "#FFFFFF", textDecoration: done ? "line-through" : "none", lineHeight: 1.5, fontWeight: done ? 400 : 500 }}>
@@ -1202,6 +1260,9 @@ export default function App() {
                         >
                           <button
                             type="button"
+                            role="checkbox"
+                            aria-checked={done}
+                            aria-label={`Mark extra task ${done ? "uncompleted" : "completed"}: ${task}`}
                             onClick={(event) => { event.stopPropagation(); toggleById(id); }}
                             style={{
                               width: 18,
@@ -1218,12 +1279,12 @@ export default function App() {
                               padding: 0,
                             }}
                           >
-                            {done && <span style={{ fontSize: 11, color: "#050811", fontWeight: 800 }}>✓</span>}
+                            {done && <CheckIcon />}
                           </button>
                           <div style={{ flex: 1 }}>
                             {href ? (
                               <a href={href} target="_blank" rel="noreferrer" style={{ fontSize: 13.5, color: done ? "#94A3B8" : "#38BDF8", textDecoration: done ? "line-through" : "none", lineHeight: 1.5, fontWeight: done ? 400 : 600 }}>
-                                {task} ↗
+                                {task} <ExternalLinkIcon />
                               </a>
                             ) : (
                               <span style={{ fontSize: 13.5, color: done ? "#94A3B8" : "#E2E8F0", textDecoration: done ? "line-through" : "none", lineHeight: 1.5, fontWeight: done ? 400 : 500 }}>
@@ -1234,6 +1295,7 @@ export default function App() {
                           </div>
                           <button
                             type="button"
+                            aria-label={`Remove extra task ${task}`}
                             onClick={(event) => { event.stopPropagation(); removeExtraTask(curDay, si, ei); }}
                             style={{ fontSize: 11, padding: "2px 8px", borderRadius: 4, border: "1px solid rgba(239, 68, 68, 0.4)", background: "rgba(239, 68, 68, 0.1)", color: "#FCA5A5", cursor: "pointer", fontWeight: 600 }}
                           >
@@ -1272,6 +1334,9 @@ export default function App() {
                       >
                         <button
                           type="button"
+                          role="checkbox"
+                          aria-checked={done}
+                          aria-label={`Mark custom task ${done ? "uncompleted" : "completed"}: ${task.text}`}
                           onClick={(event) => { event.stopPropagation(); toggleById(id); }}
                           style={{
                             width: 18,
@@ -1288,23 +1353,23 @@ export default function App() {
                             padding: 0,
                           }}
                         >
-                          {done && <span style={{ fontSize: 11, color: "#050811", fontWeight: 800 }}>✓</span>}
+                          {done && <CheckIcon />}
                         </button>
                         <div style={{ flex: 1 }}>
                           {href ? (
                             <a href={href} target="_blank" rel="noreferrer" style={{ fontSize: 13.5, color: done ? "#94A3B8" : "#38BDF8", textDecoration: done ? "line-through" : "none", lineHeight: 1.5, fontWeight: done ? 400 : 600 }}>
-                              {task.text} ↗
+                              {task.text} <ExternalLinkIcon />
                             </a>
                           ) : (
                             <span style={{ fontSize: 13.5, color: done ? "#94A3B8" : "#FFFFFF", textDecoration: done ? "line-through" : "none", lineHeight: 1.5, fontWeight: done ? 400 : 500 }}>
                               {task.text}
                             </span>
                           )}
-                          {/* Fixed: pass null safely instead of undefined sectionPriority */}
                           {renderPriorityControl(id, null)}
                         </div>
                         <button
                           type="button"
+                          aria-label={`Remove custom task ${task.text}`}
                           onClick={(event) => { event.stopPropagation(); removeCustomTask(curDay, task.id); }}
                           style={{ fontSize: 11, padding: "2px 8px", borderRadius: 4, border: "1px solid rgba(239, 68, 68, 0.4)", background: "rgba(239, 68, 68, 0.1)", color: "#FCA5A5", cursor: "pointer", fontWeight: 600 }}
                         >
@@ -1321,6 +1386,7 @@ export default function App() {
                 <input
                   value={customTaskText}
                   onChange={(e) => setCustomTaskText(e.target.value)}
+                  aria-label={`Add a custom task to ${getDayLabel(day)}`}
                   placeholder={`Add a custom task to ${getDayLabel(day)}...`}
                   style={{
                     flex: 1,
@@ -1337,6 +1403,7 @@ export default function App() {
                 />
                 <button
                   type="submit"
+                  aria-label="Submit custom task"
                   style={{
                     padding: "9px 14px",
                     borderRadius: 6,

@@ -91,3 +91,21 @@ input::placeholder, textarea::placeholder {
     box-shadow: 0 0 25px rgba(0, 240, 255, 0.35);
   }
 }
+
+/* Accessible focus rings */
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+a:focus-visible {
+  outline: 2px solid #00F0FF !important;
+  outline-offset: 2px !important;
+}
+
+button:focus:not(:focus-visible),
+input:focus:not(:focus-visible),
+select:focus:not(:focus-visible),
+textarea:focus:not(:focus-visible) {
+  outline: none;
+}
+

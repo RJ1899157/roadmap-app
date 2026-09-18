@@ -17,6 +17,20 @@ const normalizeDifficulty = (difficulty) => {
   return difficulty.charAt(0).toUpperCase() + difficulty.slice(1).toLowerCase();
 };
 
+const CheckIcon = ({ color = "#FFFFFF", size = 11 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="20 6 9 17 4 12" />
+  </svg>
+);
+
+const ExternalLinkIcon = ({ size = 10 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ display: "inline-block", verticalAlign: "middle", marginLeft: 3 }}>
+    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+    <polyline points="15 3 21 3 21 9" />
+    <line x1="10" y1="14" x2="21" y2="3" />
+  </svg>
+);
+
 const getIstDateValue = (date = new Date()) => {
   const parts = new Intl.DateTimeFormat("en-CA", {
     timeZone: IST_TIME_ZONE,
@@ -247,7 +261,7 @@ export default function LeetCodeDashboard() {
     for (let i = 0; i < 366; i++) {
       const d = new Date(now);
       d.setDate(d.getDate() - i);
-      const ds = d.toISOString().split("T")[0];
+      const ds = getIstDateValue(d);
       if (uniqueDates.has(ds)) {
         streak++;
       } else if (i > 0) {
@@ -276,24 +290,20 @@ export default function LeetCodeDashboard() {
       }
     }
 
-    const currentMonth = now.getMonth();
-    const currentYear = now.getFullYear();
-    const thisMonth = [...uniqueDates].filter((d) => {
-      const date = new Date(d);
-      return date.getMonth() === currentMonth && date.getFullYear() === currentYear;
-    }).length;
+    const thisMonthPrefix = today.slice(0, 7);
+    const thisMonth = [...uniqueDates].filter((d) => d.startsWith(thisMonthPrefix)).length;
 
     // 90-day matrix
     const matrix = [];
     for (let i = 89; i >= 0; i--) {
       const d = new Date(now);
       d.setDate(d.getDate() - i);
-      const ds = d.toISOString().split("T")[0];
+      const ds = getIstDateValue(d);
       const count = dateCounts[ds] || 0;
       matrix.push({
         date: ds,
         count,
-        isToday: i === 0,
+        isToday: ds === today,
       });
     }
 
@@ -304,7 +314,7 @@ export default function LeetCodeDashboard() {
       daysThisMonthCount: thisMonth,
       heatmapDays: matrix,
     };
-  }, [solvedLogs]);
+  }, [solvedLogs, today]);
 
   // Striver A2Z calculations
   const a2zProblems = useMemo(() => a2zSheet.map((item) => {
@@ -665,23 +675,23 @@ export default function LeetCodeDashboard() {
             <div style={{ marginTop: 14, paddingTop: 12, borderTop: "1px solid rgba(148, 163, 184, 0.15)", display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 6 }}>
               <div>
                 <span style={{ fontSize: 10, color: "#94A3B8" }}>Total</span>
-                <input type="number" value={goals.total} onChange={(e) => setGoals((g) => ({ ...g, total: Number(e.target.value) || 0 }))} style={inputStyle} />
+                <input type="number" aria-label="Target total problems solved" value={goals.total} onChange={(e) => setGoals((g) => ({ ...g, total: Number(e.target.value) || 0 }))} style={inputStyle} />
               </div>
               <div>
                 <span style={{ fontSize: 10, color: "#10B981" }}>Easy</span>
-                <input type="number" value={goals.easy} onChange={(e) => setGoals((g) => ({ ...g, easy: Number(e.target.value) || 0 }))} style={inputStyle} />
+                <input type="number" aria-label="Target Easy problems solved" value={goals.easy} onChange={(e) => setGoals((g) => ({ ...g, easy: Number(e.target.value) || 0 }))} style={inputStyle} />
               </div>
               <div>
                 <span style={{ fontSize: 10, color: "#F59E0B" }}>Medium</span>
-                <input type="number" value={goals.medium} onChange={(e) => setGoals((g) => ({ ...g, medium: Number(e.target.value) || 0 }))} style={inputStyle} />
+                <input type="number" aria-label="Target Medium problems solved" value={goals.medium} onChange={(e) => setGoals((g) => ({ ...g, medium: Number(e.target.value) || 0 }))} style={inputStyle} />
               </div>
               <div>
                 <span style={{ fontSize: 10, color: "#EF4444" }}>Hard</span>
-                <input type="number" value={goals.hard} onChange={(e) => setGoals((g) => ({ ...g, hard: Number(e.target.value) || 0 }))} style={inputStyle} />
+                <input type="number" aria-label="Target Hard problems solved" value={goals.hard} onChange={(e) => setGoals((g) => ({ ...g, hard: Number(e.target.value) || 0 }))} style={inputStyle} />
               </div>
               <div>
                 <span style={{ fontSize: 10, color: "#00F0FF" }}>Streak</span>
-                <input type="number" value={goals.streak} onChange={(e) => setGoals((g) => ({ ...g, streak: Number(e.target.value) || 0 }))} style={inputStyle} />
+                <input type="number" aria-label="Target streak days" value={goals.streak} onChange={(e) => setGoals((g) => ({ ...g, streak: Number(e.target.value) || 0 }))} style={inputStyle} />
               </div>
             </div>
           )}
@@ -703,6 +713,9 @@ export default function LeetCodeDashboard() {
               return (
                 <div
                   key={day.date}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`${day.date}: ${day.count} solved${day.isToday ? " (Today)" : ""}`}
                   title={`${day.date}: ${day.count} solved${day.isToday ? " (Today)" : ""}`}
                   style={{
                     aspectRatio: "1",
@@ -779,34 +792,36 @@ export default function LeetCodeDashboard() {
         </div>
 
         <div style={{ display: "grid", gridTemplateColumns: "110px minmax(180px, 1fr) 120px 160px 130px 140px", gap: 8, alignItems: "start" }}>
-          <input value={form.lookup} onChange={(e) => setLookup(e.target.value)} placeholder="#, slug, title" style={inputStyle} />
-          <input value={form.title} onChange={(e) => setForm((prev) => ({ ...prev, title: e.target.value }))} placeholder="Problem title" style={inputStyle} />
-          <select value={form.difficulty} onChange={(e) => setForm((prev) => ({ ...prev, difficulty: e.target.value }))} style={{ ...inputStyle, cursor: "pointer" }}>
+          <input aria-label="Problem number, slug, or title search" value={form.lookup} onChange={(e) => setLookup(e.target.value)} placeholder="#, slug, title" style={inputStyle} />
+          <input aria-label="Problem title" value={form.title} onChange={(e) => setForm((prev) => ({ ...prev, title: e.target.value }))} placeholder="Problem title" style={inputStyle} />
+          <select aria-label="Problem difficulty" value={form.difficulty} onChange={(e) => setForm((prev) => ({ ...prev, difficulty: e.target.value }))} style={{ ...inputStyle, cursor: "pointer" }}>
             <option>Easy</option>
             <option>Medium</option>
             <option>Hard</option>
           </select>
           <div style={{ position: "relative" }}>
-            <input list="type-options" value={form.type} onChange={(e) => setForm((prev) => ({ ...prev, type: e.target.value }))} placeholder="Category / Topic" style={inputStyle} />
+            <input list="type-options" aria-label="Problem category or topic" value={form.type} onChange={(e) => setForm((prev) => ({ ...prev, type: e.target.value }))} placeholder="Category / Topic" style={inputStyle} />
             <datalist id="type-options">
               {allTypes.map((type) => <option key={type} value={type} />)}
             </datalist>
           </div>
-          <select value={form.status} onChange={(e) => setForm((prev) => ({ ...prev, status: e.target.value }))} style={{ ...inputStyle, cursor: "pointer" }}>
+          <select aria-label="Problem solve status" value={form.status} onChange={(e) => setForm((prev) => ({ ...prev, status: e.target.value }))} style={{ ...inputStyle, cursor: "pointer" }}>
             <option>Solved</option>
             <option>Attempted</option>
             <option>Review</option>
           </select>
-          <input type="date" value={form.date} onChange={(e) => setForm((prev) => ({ ...prev, date: e.target.value }))} style={inputStyle} />
+          <input type="date" aria-label="Solved date" value={form.date} onChange={(e) => setForm((prev) => ({ ...prev, date: e.target.value }))} style={inputStyle} />
         </div>
 
         <textarea
+          aria-label="Learnings and notes"
           value={form.learnings}
           onChange={(e) => setForm((prev) => ({ ...prev, learnings: e.target.value }))}
           placeholder="Learnings: key insight, edge cases, time/space complexity O(n), pattern used..."
           style={{ ...inputStyle, minHeight: 70, marginTop: 8, resize: "vertical" }}
         />
         <textarea
+          aria-label="Code snippet"
           value={form.code}
           onChange={(e) => setForm((prev) => ({ ...prev, code: e.target.value }))}
           placeholder="Solution code snippet or pseudocode..."
@@ -815,11 +830,11 @@ export default function LeetCodeDashboard() {
 
         <div style={{ display: "flex", justifyContent: "flex-end", gap: 8, marginTop: 10 }}>
           {editLogId && (
-            <button type="button" onClick={cancelEdit} style={{ ...buttonStyle, borderColor: "#64748B", color: "#94A3B8", background: "transparent" }}>
+            <button type="button" aria-label="Cancel editing" onClick={cancelEdit} style={{ ...buttonStyle, borderColor: "#64748B", color: "#94A3B8", background: "transparent" }}>
               Cancel
             </button>
           )}
-          <button type="submit" style={buttonStyle}>
+          <button type="submit" aria-label={editLogId ? "Save changes" : "Log problem"} style={buttonStyle}>
             {editLogId ? "Save Changes" : "Log Problem"}
           </button>
         </div>
@@ -839,6 +854,7 @@ export default function LeetCodeDashboard() {
 
             <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
               <input
+                aria-label="Search logs"
                 value={filters.search}
                 onChange={(e) => setFilters((prev) => ({ ...prev, search: e.target.value }))}
                 placeholder="Search logs..."
@@ -846,17 +862,18 @@ export default function LeetCodeDashboard() {
               />
               <input
                 type="date"
+                aria-label="Filter logs by date"
                 value={filters.date}
                 onChange={(e) => setFilters((prev) => ({ ...prev, date: e.target.value }))}
                 style={{ ...inputStyle, width: 130 }}
               />
-              <button type="button" onClick={() => setFilters((prev) => ({ ...prev, date: today }))} style={{ ...buttonStyle, padding: "6px 10px", fontSize: 11 }}>
+              <button type="button" aria-label="Filter logs for today" onClick={() => setFilters((prev) => ({ ...prev, date: today }))} style={{ ...buttonStyle, padding: "6px 10px", fontSize: 11 }}>
                 Today
               </button>
-              <button type="button" onClick={() => setFilters((prev) => ({ ...prev, date: "" }))} style={{ ...buttonStyle, padding: "6px 10px", fontSize: 11, borderColor: "rgba(148, 163, 184, 0.2)", color: "#94A3B8" }}>
+              <button type="button" aria-label="Show all logs" onClick={() => setFilters((prev) => ({ ...prev, date: "" }))} style={{ ...buttonStyle, padding: "6px 10px", fontSize: 11, borderColor: "rgba(148, 163, 184, 0.2)", color: "#94A3B8" }}>
                 All
               </button>
-              <button type="button" onClick={exportLogsCsv} style={{ ...buttonStyle, padding: "6px 10px", fontSize: 11, borderColor: "#38BDF8", color: "#38BDF8" }} disabled={!logs.length}>
+              <button type="button" aria-label="Export logs as CSV" onClick={exportLogsCsv} style={{ ...buttonStyle, padding: "6px 10px", fontSize: 11, borderColor: "#38BDF8", color: "#38BDF8" }} disabled={!logs.length}>
                 CSV
               </button>
             </div>
@@ -890,10 +907,10 @@ export default function LeetCodeDashboard() {
                     </td>
                     <td style={{ padding: "10px 8px", textAlign: "right" }}>
                       <div style={{ display: "flex", gap: 6, justifyContent: "flex-end" }}>
-                        <button type="button" onClick={() => editLog(log)} style={{ border: "1px solid rgba(56, 189, 248, 0.5)", background: "rgba(56, 189, 248, 0.12)", color: "#38BDF8", borderRadius: 4, cursor: "pointer", fontSize: 11, padding: "3px 8px", fontWeight: 600 }}>
+                        <button type="button" aria-label={`Edit ${log.title}`} onClick={() => editLog(log)} style={{ border: "1px solid rgba(56, 189, 248, 0.5)", background: "rgba(56, 189, 248, 0.12)", color: "#38BDF8", borderRadius: 4, cursor: "pointer", fontSize: 11, padding: "3px 8px", fontWeight: 600 }}>
                           edit
                         </button>
-                        <button type="button" onClick={() => deleteLog(log.id)} style={{ border: "1px solid rgba(239, 68, 68, 0.5)", background: "rgba(239, 68, 68, 0.12)", color: "#FCA5A5", borderRadius: 4, cursor: "pointer", fontSize: 11, padding: "3px 8px", fontWeight: 600 }}>
+                        <button type="button" aria-label={`Delete ${log.title}`} onClick={() => deleteLog(log.id)} style={{ border: "1px solid rgba(239, 68, 68, 0.5)", background: "rgba(239, 68, 68, 0.12)", color: "#FCA5A5", borderRadius: 4, cursor: "pointer", fontSize: 11, padding: "3px 8px", fontWeight: 600 }}>
                           del
                         </button>
                       </div>
@@ -993,6 +1010,9 @@ export default function LeetCodeDashboard() {
               <div style={{ display: "flex", gap: 8, alignItems: "flex-start" }}>
                 <button
                   type="button"
+                  role="checkbox"
+                  aria-checked={item.isDone}
+                  aria-label={`Mark ${item.title} as ${item.isDone ? "unsolved" : "solved"}`}
                   onClick={() => toggleA2zDone(item.id)}
                   style={{
                     width: 18,
@@ -1011,7 +1031,7 @@ export default function LeetCodeDashboard() {
                     marginTop: 2,
                   }}
                 >
-                  {item.isDone ? "✓" : ""}
+                  {item.isDone ? <CheckIcon /> : null}
                 </button>
                 <div style={{ flex: 1 }}>
                   <div style={{ fontSize: 12.5, fontWeight: 500, color: item.isDone ? "#6EE7B7" : "#F8FAFC", lineHeight: 1.4 }}>
@@ -1024,10 +1044,10 @@ export default function LeetCodeDashboard() {
                     {item.leetcodeNumber && <span style={{ color: "#F59E0B", fontSize: 10.5, fontFamily: "'JetBrains Mono', monospace" }}>LC #{item.leetcodeNumber}</span>}
                     {item.difficulty && <span style={{ color: difficultyColors[item.difficulty] || "#94A3B8", fontSize: 10.5, fontWeight: 600 }}>{item.difficulty}</span>}
                     {item.leetcode && (
-                      <a href={item.leetcode} target="_blank" rel="noreferrer" style={{ color: "#38BDF8", fontSize: 10.5, textDecoration: "none" }}>LeetCode ↗</a>
+                      <a href={item.leetcode} target="_blank" rel="noreferrer" style={{ color: "#38BDF8", fontSize: 10.5, textDecoration: "none" }}>LeetCode <ExternalLinkIcon /></a>
                     )}
                     {item.takeuforward && (
-                      <a href={item.takeuforward} target="_blank" rel="noreferrer" style={{ color: "#38BDF8", fontSize: 10.5, textDecoration: "none" }}>TUF ↗</a>
+                      <a href={item.takeuforward} target="_blank" rel="noreferrer" style={{ color: "#38BDF8", fontSize: 10.5, textDecoration: "none" }}>TUF <ExternalLinkIcon /></a>
                     )}
                   </div>
                 </div>
@@ -1035,6 +1055,7 @@ export default function LeetCodeDashboard() {
 
               <button
                 type="button"
+                aria-label={`Prefill or log ${item.title}`}
                 onClick={() => prefillA2zProblem(item)}
                 style={{
                   ...buttonStyle,
@@ -1064,6 +1085,7 @@ export default function LeetCodeDashboard() {
           <input
             value={bankSearch}
             onChange={(e) => setBankSearch(e.target.value)}
+            aria-label="Search problem bank by number, title, or tag"
             placeholder="Search #, title, or tag..."
             style={{ ...inputStyle, maxWidth: 260 }}
           />
